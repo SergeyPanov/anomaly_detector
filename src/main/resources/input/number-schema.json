@@ -1,0 +1,10 @@
+{
+  "type" : "object",
+  "properties" : {
+    "numb" : {
+      "type" : "number",
+      "minimum" : 0
+    }
+  },
+  "additionalProperties" : false
+}

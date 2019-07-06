@@ -158,6 +158,10 @@ public class TrieTest {
                 "        }\n" +
                 "      },\n" +
                 "      \"additionalProperties\" : false\n" +
+                "    },\n" +
+                "    \"aotherSimple\" : {\n" +
+                "      \"type\" : \"number\",\n" +
+                "      \"minimum\" : 0\n" +
                 "    }\n" +
                 "  },\n" +
                 "  \"additionalProperties\" : false\n" +

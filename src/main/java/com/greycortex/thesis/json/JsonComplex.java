@@ -35,8 +35,11 @@ public class JsonComplex extends JsonAbstract {
         .append(getName())
         .append(", ")
         .append("type: ")
-        .append(getType())
-        .append(", ");
+        .append(getType());
+
+        if (elements.size() > 0){
+            builder.append(", ");
+        }
 
         for (int i = 0; i < elements.size(); i++) {
             builder.append(elements.get(i).toString());

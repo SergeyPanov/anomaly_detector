@@ -2,9 +2,18 @@ package com.greycortex.thesis.json;
 
 public abstract class JsonAbstract {
     private String name;
-    private String type;
 
-    public JsonAbstract(String name, String type) {
+    public Types getType() {
+        return type;
+    }
+
+    public void setType(Types type) {
+        this.type = type;
+    }
+
+    private Types type;
+
+    public JsonAbstract(String name, Types type) {
         this.name = name;
         this.type = type;
     }
@@ -21,11 +30,4 @@ public abstract class JsonAbstract {
         this.name = name;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 }

@@ -65,16 +65,28 @@ public class TrieTest {
                 "    \"arr\" : {\n" +
                 "      \"type\" : \"array\",\n" +
                 "      \"items\" : {\n" +
-                "        \"type\" : [ \"object\", \"array\", \"string\", \"integer\" ],\n" +
+                "        \"type\" : [ \"object\", \"array\", \"string\", \"number\" ],\n" +
                 "        \"properties\" : {\n" +
-                "          \"two\" : {\n" +
+                "          \"one\" : {\n" +
                 "            \"type\" : \"integer\",\n" +
                 "            \"maximum\" : 32767,\n" +
                 "            \"minimum\" : 0\n" +
                 "          },\n" +
-                "          \"one\" : {\n" +
-                "            \"type\" : \"integer\",\n" +
+                "          \"two\" : {\n" +
+                "            \"type\" : [ \"object\", \"integer\" ],\n" +
+                "            \"properties\" : {\n" +
+                "              \"inn\" : {\n" +
+                "                \"type\" : \"integer\",\n" +
+                "                \"maximum\" : 32767,\n" +
+                "                \"minimum\" : 0\n" +
+                "              }\n" +
+                "            },\n" +
+                "            \"additionalProperties\" : false,\n" +
                 "            \"maximum\" : 32767,\n" +
+                "            \"minimum\" : 0\n" +
+                "          },\n" +
+                "          \"asdasd\" : {\n" +
+                "            \"type\" : \"number\",\n" +
                 "            \"minimum\" : 0\n" +
                 "          },\n" +
                 "          \"shit\" : {\n" +
@@ -94,7 +106,6 @@ public class TrieTest {
                 "        },\n" +
                 "        \"minLength\" : 3,\n" +
                 "        \"maxLength\" : 9,\n" +
-                "        \"maximum\" : 32767,\n" +
                 "        \"minimum\" : 0\n" +
                 "      }\n" +
                 "    }\n" +
@@ -166,6 +177,45 @@ public class TrieTest {
                 "  },\n" +
                 "  \"additionalProperties\" : false\n" +
                 "}");
+        Trie trie = new Trie(new JsonWrapper(object));
+    }
+
+
+    @Test
+    public void arrayOfObjectsTest() throws ParseException {
+        JSONParser parser = new JSONParser();
+
+        JSONObject object = (JSONObject) parser.parse("{\n" +
+                "  \"type\" : \"object\",\n" +
+                "  \"properties\" : {\n" +
+                "    \"obarray\" : {\n" +
+                "      \"type\" : \"array\",\n" +
+                "      \"items\" : {\n" +
+                "        \"type\" : \"object\",\n" +
+                "        \"properties\" : {\n" +
+                "          \"el2\" : {\n" +
+                "            \"type\" : \"integer\",\n" +
+                "            \"maximum\" : 32767,\n" +
+                "            \"minimum\" : 0\n" +
+                "          },\n" +
+                "          \"el1\" : {\n" +
+                "            \"type\" : \"integer\",\n" +
+                "            \"maximum\" : 32767,\n" +
+                "            \"minimum\" : 0\n" +
+                "          },\n" +
+                "          \"el3\" : {\n" +
+                "            \"type\" : \"integer\",\n" +
+                "            \"maximum\" : 32767,\n" +
+                "            \"minimum\" : 0\n" +
+                "          }\n" +
+                "        },\n" +
+                "        \"additionalProperties\" : false\n" +
+                "      }\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"additionalProperties\" : false\n" +
+                "}");
+
         Trie trie = new Trie(new JsonWrapper(object));
     }
 

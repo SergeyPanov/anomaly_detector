@@ -6,7 +6,7 @@ import java.util.List;
 public class JsonComplex extends JsonAbstract {
     private List<JsonAbstract> elements;
 
-    public JsonComplex(String name, String type) {
+    public JsonComplex(String name, Types type) {
         super(name, type);
         this.elements = new ArrayList<>();
     }

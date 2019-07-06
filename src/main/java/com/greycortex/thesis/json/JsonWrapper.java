@@ -3,10 +3,8 @@ package com.greycortex.thesis.json;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 
 public class JsonWrapper {
     private final JSONObject object;
@@ -93,6 +91,7 @@ public class JsonWrapper {
     public Set<Map.Entry> entrySet() {
         return object.entrySet();
     }
+
     @Override
     public String toString() {
         return object.toString();

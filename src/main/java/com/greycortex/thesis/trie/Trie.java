@@ -4,8 +4,11 @@ import com.greycortex.thesis.json.*;
 import javafx.util.Pair;
 import org.json.simple.JSONObject;
 
+import java.util.AbstractMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class Trie {
     private JsonWrapper object;
@@ -55,7 +58,7 @@ public class Trie {
                 if (value.getType() == Types.STRING || value.getType() == Types.NUMBER || value.getType() == Types.INTEGER) {
 
                     // Branch for simple object(string, number)
-                    JsonSimple simpleElement = new JsonSimple(name, value.getString(SchemaKeys.TYPE));
+                    JsonSimple simpleElement = new JsonSimple(name, value.getType());
 
                     String maxK = Types.valueOf(value.getString(SchemaKeys.TYPE).toUpperCase()) == Types.NUMBER ||
                             Types.valueOf(value.getString(SchemaKeys.TYPE).toUpperCase()) == Types.INTEGER ? SchemaKeys.MAXIMUM : SchemaKeys.MAX_LENGTH;
@@ -72,12 +75,86 @@ public class Trie {
                     Types type = value.getType();
                     switch (type) {
                         case OBJECT:
-                            JsonComplex auxNode = new JsonComplex(name, value.getString(SchemaKeys.TYPE));
+                            JsonComplex auxNode = new JsonComplex(name, value.getType());
                             currentRoot.add(0, auxNode);
                             Stack<Map.Entry> nextInput = new Stack<>();
                             nextInput.addAll(value.getWrapped(SchemaKeys.PROPERTIES).entrySet());
                             trieConstructStack.push(new Pair<>(auxNode, nextInput));
+                            break;
 
+                        case ARRAY:
+                            auxNode = new JsonComplex(name, value.getType());
+                            currentRoot.add(0, auxNode);
+                            nextInput = new Stack<>();
+                            Map.Entry<String, JSONObject> entry = new AbstractMap.SimpleEntry<>(SchemaKeys.ITEMS, value.getWrapped(SchemaKeys.ITEMS).getObject());
+                            nextInput.add(entry);
+                            trieConstructStack.push(new Pair<>(auxNode, nextInput));
+                            break;
+
+                        case ARRAY_COMPLEX:
+                            auxNode = new JsonComplex(name, value.getType());
+                            currentRoot.add(0, auxNode);
+                            JSONObject dummy = new JSONObject();
+                            nextInput = new Stack<>();
+
+                            List<String> tps = value.getSimpleArray(SchemaKeys.TYPE).stream().map(String::toLowerCase).collect(Collectors.toList());
+                            if (tps.contains(Types.STRING.getValue())) {
+
+                                dummy.put(SchemaKeys.MIN_LENGTH, value.getNumber(SchemaKeys.MIN_LENGTH, null));
+                                dummy.put(SchemaKeys.MAX_LENGTH, value.getNumber(SchemaKeys.MAX_LENGTH, null));
+                                dummy.put(SchemaKeys.TYPE, Types.STRING.getValue());
+
+                                entry = new AbstractMap.SimpleEntry<>(name + "_" + "string", dummy);
+
+                                nextInput.add(entry);
+                            }
+
+
+                            if (tps.contains(Types.INTEGER.getValue())) {
+                                dummy = new JSONObject();
+
+                                dummy.put(SchemaKeys.MINIMUM, value.getNumber(SchemaKeys.MIN_LENGTH, null));
+                                dummy.put(SchemaKeys.MAXIMUM, value.getNumber(SchemaKeys.MAX_LENGTH, null));
+                                dummy.put(SchemaKeys.TYPE, Types.INTEGER.getValue());
+
+                                entry = new AbstractMap.SimpleEntry<>(name + "_" + "integer", dummy);
+
+                                nextInput.add(entry);
+                            }
+
+                            if (tps.contains(Types.NUMBER.getValue())) {
+                                dummy = new JSONObject();
+
+                                dummy.put(SchemaKeys.MINIMUM, value.getNumber(SchemaKeys.MIN_LENGTH, null));
+                                dummy.put(SchemaKeys.MAXIMUM, value.getNumber(SchemaKeys.MAX_LENGTH, null));
+                                dummy.put(SchemaKeys.TYPE, Types.NUMBER.getValue());
+
+                                entry = new AbstractMap.SimpleEntry<>(name + "_" + "number", dummy);
+
+                                nextInput.add(entry);
+                            }
+
+                            if (tps.contains(Types.OBJECT.getValue())) {
+                                dummy = new JSONObject();
+
+                                dummy.put(SchemaKeys.PROPERTIES, value.getWrapped(SchemaKeys.PROPERTIES).getObject());
+                                dummy.put(SchemaKeys.TYPE, Types.OBJECT.getValue());
+
+                                entry = new AbstractMap.SimpleEntry<>(name + "_" + "object", dummy);
+                                nextInput.add(entry);
+                            }
+
+                            if (tps.contains(Types.ARRAY.getValue())) {
+                                dummy = new JSONObject();
+
+                                dummy.put(SchemaKeys.ITEMS, value.getWrapped(SchemaKeys.ITEMS).getObject());
+                                dummy.put(SchemaKeys.TYPE, Types.ARRAY.getValue());
+
+                                entry = new AbstractMap.SimpleEntry<>(name + "_" + "array", dummy);
+                                nextInput.add(entry);
+                            }
+                            trieConstructStack.push(new Pair<>(auxNode, nextInput));
+                            break;
                     }
                 }
             }

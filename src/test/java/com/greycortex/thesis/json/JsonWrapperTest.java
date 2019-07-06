@@ -163,4 +163,6 @@ public class JsonWrapperTest {
         }
         Assert.assertEquals(Types.ARRAY, wrapper.getType());
     }
+
+
 }

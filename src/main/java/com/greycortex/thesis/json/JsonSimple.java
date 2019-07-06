@@ -4,7 +4,7 @@ public class JsonSimple extends JsonAbstract {
     private Number max = -1;
     private Number min = -1;
 
-    public JsonSimple(String name, String type) {
+    public JsonSimple(String name, Types type) {
         super(name, type);
     }
 

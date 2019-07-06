@@ -1,26 +1,51 @@
 package com.greycortex.thesis.json;
 
 public class JsonSimple extends JsonAbstract {
-    private int max = -1;
-    private int min = -1;
+    private Number max = -1;
+    private Number min = -1;
 
     public JsonSimple(String name, String type) {
         super(name, type);
     }
 
-    public int getMax() {
-        return max;
+    private JsonSimple() {
+        this(null, null);
     }
 
-    public void setMax(int max) {
-        this.max = max;
-    }
 
-    public int getMin() {
+    public Number getMin() {
         return min;
     }
 
-    public void setMin(int min) {
+    public Number getMax() {
+        return max;
+    }
+
+
+    public void setMax(Number max) {
+        this.max = max;
+    }
+
+    public void setMin(Number min) {
         this.min = min;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("{")
+                .append("name: ")
+                .append(getName())
+                .append(", ")
+                .append("type: ")
+                .append(getType())
+                .append(", ")
+                .append("min: ")
+                .append(min)
+                .append(", ")
+                .append("max: ")
+                .append(max)
+                .append("}");
+        return builder.toString();
     }
 }

@@ -9,6 +9,10 @@ public abstract class JsonAbstract {
         this.type = type;
     }
 
+    public JsonAbstract() {
+        this(null, null);
+    }
+
     public String getName() {
         return name;
     }

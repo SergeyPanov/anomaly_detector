@@ -1,18 +1,35 @@
 package com.greycortex.thesis.json;
 
-import com.sun.istack.internal.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class JsonWrapper {
     private final JSONObject object;
 
+    private final Types type;
+
     public JsonWrapper(JSONObject object) {
         this.object = object;
+
+        // Only root has no TYPE, consider it as regular object
+        if (object.get(SchemaKeys.TYPE) == null) {
+            type = Types.OBJECT;
+        }else if (object.get(SchemaKeys.TYPE) instanceof JSONArray){
+            // Array can contain multiple types
+            type = Types.ARRAY_COMPLEX;
+        } else {
+            type = Types.valueOf(((String) object.get(SchemaKeys.TYPE)).toUpperCase());
+        }
+
+    }
+
+    public Types getType() {
+        return type;
     }
 
     public JSONObject getObject() {
@@ -22,7 +39,7 @@ public class JsonWrapper {
     public JsonWrapper getWrapped(String name) {
         return object.get(name) == null ? null : new JsonWrapper((JSONObject) object.get(name));
     }
-    public List<JsonWrapper> getArray(String name) {
+    public List<JsonWrapper> getComplexArray(String name) {
         List<JsonWrapper> wrappers = new ArrayList<>();
 
         JSONArray arr = (JSONArray) object.get(name);
@@ -38,6 +55,22 @@ public class JsonWrapper {
         return wrappers;
     }
 
+    public List<String> getSimpleArray(String name) {
+        List<String> strings = new ArrayList<>();
+
+        JSONArray arr = (JSONArray) object.get(name);
+
+        if (arr == null) return strings;
+
+        for (Object o :
+                arr) {
+            if (o instanceof String) {
+                strings.add((String)o);
+            }
+        }
+        return strings;
+    }
+
     public Set keySet() {
         return object.keySet();
     }
@@ -45,9 +78,20 @@ public class JsonWrapper {
     public String getString(String name) {
         return  (String)object.get(name);
     }
+    public String getString(String name, String defaultValue) {
+        return getString(name) == null ? defaultValue : getString(name);
+    }
 
     public Number getNumber(String name) {
         return (Number) object.get(name);
+    }
+
+    public Number getNumber(String name, Number defaultValue) {
+        return getNumber(name) == null ? defaultValue: getNumber(name);
+    }
+
+    public Set<Map.Entry> entrySet() {
+        return object.entrySet();
     }
     @Override
     public String toString() {

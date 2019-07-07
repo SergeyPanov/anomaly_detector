@@ -6,6 +6,8 @@ public enum Types {
     ARRAY("array"),
     ARRAY_COMPLEX("complex_array"), // Array contains elements of different types
     OBJECT("object"),
+    NULL("null"),
+    BOOLEAN("boolean"),
     INTEGER("integer");
 
 

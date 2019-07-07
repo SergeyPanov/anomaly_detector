@@ -55,7 +55,7 @@ public class Trie {
                 String name = (String) inputNode.getKey();
                 JsonWrapper value = new JsonWrapper((JSONObject) inputNode.getValue());
 
-                if (value.getType() == Types.STRING || value.getType() == Types.NUMBER || value.getType() == Types.INTEGER) {
+                if (value.getType() == Types.STRING || value.getType() == Types.NUMBER || value.getType() == Types.INTEGER || value.getType() == Types.NULL || value.getType() == Types.BOOLEAN) {
 
                     // Branch for simple object(string, number)
                     JsonSimple simpleElement = new JsonSimple(name, value.getType());

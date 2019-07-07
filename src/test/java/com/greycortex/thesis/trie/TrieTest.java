@@ -97,12 +97,50 @@ public class TrieTest {
                 "        },\n" +
                 "        \"additionalProperties\" : false,\n" +
                 "        \"items\" : {\n" +
-                "          \"type\" : \"array\",\n" +
+                "          \"type\" : [ \"object\", \"array\", \"string\", \"number\" ],\n" +
+                "          \"properties\" : {\n" +
+                "            \"one\" : {\n" +
+                "              \"type\" : \"integer\",\n" +
+                "              \"maximum\" : 32767,\n" +
+                "              \"minimum\" : 0\n" +
+                "            },\n" +
+                "            \"two\" : {\n" +
+                "              \"type\" : [ \"object\", \"integer\" ],\n" +
+                "              \"properties\" : {\n" +
+                "                \"inn\" : {\n" +
+                "                  \"type\" : \"integer\",\n" +
+                "                  \"maximum\" : 32767,\n" +
+                "                  \"minimum\" : 0\n" +
+                "                }\n" +
+                "              },\n" +
+                "              \"additionalProperties\" : false,\n" +
+                "              \"maximum\" : 32767,\n" +
+                "              \"minimum\" : 0\n" +
+                "            },\n" +
+                "            \"asdasd\" : {\n" +
+                "              \"type\" : \"number\",\n" +
+                "              \"minimum\" : 0\n" +
+                "            },\n" +
+                "            \"shit\" : {\n" +
+                "              \"type\" : \"integer\",\n" +
+                "              \"maximum\" : 32767,\n" +
+                "              \"minimum\" : 0\n" +
+                "            }\n" +
+                "          },\n" +
+                "          \"additionalProperties\" : false,\n" +
                 "          \"items\" : {\n" +
-                "            \"type\" : \"integer\",\n" +
+                "            \"type\" : [ \"array\", \"integer\" ],\n" +
+                "            \"items\" : {\n" +
+                "              \"type\" : \"integer\",\n" +
+                "              \"maximum\" : 32767,\n" +
+                "              \"minimum\" : 0\n" +
+                "            },\n" +
                 "            \"maximum\" : 32767,\n" +
                 "            \"minimum\" : 0\n" +
-                "          }\n" +
+                "          },\n" +
+                "          \"minLength\" : 3,\n" +
+                "          \"maxLength\" : 9,\n" +
+                "          \"minimum\" : 0\n" +
                 "        },\n" +
                 "        \"minLength\" : 3,\n" +
                 "        \"maxLength\" : 9,\n" +

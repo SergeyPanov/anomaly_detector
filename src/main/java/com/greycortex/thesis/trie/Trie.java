@@ -113,8 +113,8 @@ public class Trie {
                             if (tps.contains(Types.INTEGER.getValue())) {
                                 dummy = new JSONObject();
 
-                                dummy.put(SchemaKeys.MINIMUM, value.getNumber(SchemaKeys.MIN_LENGTH, null));
-                                dummy.put(SchemaKeys.MAXIMUM, value.getNumber(SchemaKeys.MAX_LENGTH, null));
+                                dummy.put(SchemaKeys.MINIMUM, value.getNumber(SchemaKeys.MINIMUM, null));
+                                dummy.put(SchemaKeys.MAXIMUM, value.getNumber(SchemaKeys.MAXIMUM, null));
                                 dummy.put(SchemaKeys.TYPE, Types.INTEGER.getValue());
 
                                 entry = new AbstractMap.SimpleEntry<>(name + "_" + "integer", dummy);
@@ -125,8 +125,8 @@ public class Trie {
                             if (tps.contains(Types.NUMBER.getValue())) {
                                 dummy = new JSONObject();
 
-                                dummy.put(SchemaKeys.MINIMUM, value.getNumber(SchemaKeys.MIN_LENGTH, null));
-                                dummy.put(SchemaKeys.MAXIMUM, value.getNumber(SchemaKeys.MAX_LENGTH, null));
+                                dummy.put(SchemaKeys.MINIMUM, value.getNumber(SchemaKeys.MINIMUM, null));
+                                dummy.put(SchemaKeys.MAXIMUM, value.getNumber(SchemaKeys.MAXIMUM, null));
                                 dummy.put(SchemaKeys.TYPE, Types.NUMBER.getValue());
 
                                 entry = new AbstractMap.SimpleEntry<>(name + "_" + "number", dummy);

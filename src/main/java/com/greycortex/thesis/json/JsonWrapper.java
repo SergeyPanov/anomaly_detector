@@ -9,26 +9,32 @@ import java.util.*;
 public class JsonWrapper {
     private final JSONObject object;
 
-    private final Types type;
+    private final Set<Type> type = new HashSet<>();
 
     public JsonWrapper(JSONObject object) {
         this.object = object;
 
-        // Only root has no TYPE, consider it as regular object
+
         if (object.get(SchemaKeys.TYPE) == null) {
-            type = Types.OBJECT;
-        }else if (object.get(SchemaKeys.TYPE) instanceof JSONArray){
+            type.add(Type.OBJECT);
+        } else if (object.get(SchemaKeys.TYPE) instanceof JSONArray) {
             // Array can contain multiple types
-            type = Types.ARRAY_COMPLEX;
+            JSONArray tps = (JSONArray) object.get(SchemaKeys.TYPE);
+
+            for (Object tp : tps) {
+                type.add(Type.getEnum(((String) tp)));
+            }
         } else {
-            type = Types.valueOf(((String) object.get(SchemaKeys.TYPE)).toUpperCase());
+            type.add(Type.getEnum(((String) object.get(SchemaKeys.TYPE))));
         }
 
+
     }
 
-    public Types getType() {
+    public Set<Type> getType() {
         return type;
     }
+
 
     public JSONObject getObject() {
         return object;
@@ -37,6 +43,7 @@ public class JsonWrapper {
     public JsonWrapper getWrapped(String name) {
         return object.get(name) == null ? null : new JsonWrapper((JSONObject) object.get(name));
     }
+
     public List<JsonWrapper> getComplexArray(String name) {
         List<JsonWrapper> wrappers = new ArrayList<>();
 
@@ -47,7 +54,7 @@ public class JsonWrapper {
         for (Object o :
                 arr) {
             if (o instanceof JSONObject) {
-                wrappers.add(new JsonWrapper((JSONObject)o));
+                wrappers.add(new JsonWrapper((JSONObject) o));
             }
         }
         return wrappers;
@@ -63,7 +70,7 @@ public class JsonWrapper {
         for (Object o :
                 arr) {
             if (o instanceof String) {
-                strings.add((String)o);
+                strings.add((String) o);
             }
         }
         return strings;
@@ -74,8 +81,9 @@ public class JsonWrapper {
     }
 
     public String getString(String name) {
-        return  (String)object.get(name);
+        return (String) object.get(name);
     }
+
     public String getString(String name, String defaultValue) {
         return getString(name) == null ? defaultValue : getString(name);
     }
@@ -85,7 +93,7 @@ public class JsonWrapper {
     }
 
     public Number getNumber(String name, Number defaultValue) {
-        return getNumber(name) == null ? defaultValue: getNumber(name);
+        return getNumber(name) == null ? defaultValue : getNumber(name);
     }
 
     public Set<Map.Entry> entrySet() {

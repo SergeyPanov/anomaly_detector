@@ -1,21 +1,22 @@
 package com.greycortex.thesis.json;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 public abstract class JsonAbstract {
     private String name;
 
-    public Types getType() {
-        return type;
-    }
+    private Set<Type> type;
 
-    public void setType(Types type) {
-        this.type = type;
-    }
 
-    private Types type;
-
-    public JsonAbstract(String name, Types type) {
+    public JsonAbstract(String name, Set<Type> type) {
         this.name = name;
         this.type = type;
+    }
+
+    public JsonAbstract(String name){
+        this(name, new HashSet<>());
     }
 
     public JsonAbstract() {
@@ -30,4 +31,7 @@ public abstract class JsonAbstract {
         this.name = name;
     }
 
+    public Set<Type> getType() {
+        return type;
+    }
 }

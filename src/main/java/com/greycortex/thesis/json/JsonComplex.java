@@ -2,11 +2,12 @@ package com.greycortex.thesis.json;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class JsonComplex extends JsonAbstract {
     private List<JsonAbstract> elements;
 
-    public JsonComplex(String name, Types type) {
+    public JsonComplex(String name, Set<Type> type) {
         super(name, type);
         this.elements = new ArrayList<>();
     }

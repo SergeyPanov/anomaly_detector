@@ -1,15 +1,21 @@
 package com.greycortex.thesis.json;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 public class JsonSimple extends JsonAbstract {
     private Number max = -1;
     private Number min = -1;
 
-    public JsonSimple(String name, Types type) {
+    private String format;
+
+    public JsonSimple(String name, Set<Type> type, String format) {
         super(name, type);
+        this.format = format;
     }
 
     private JsonSimple() {
-        this(null, null);
+        this(null, null, null);
     }
 
 
@@ -45,7 +51,14 @@ public class JsonSimple extends JsonAbstract {
                 .append(", ")
                 .append("max: ")
                 .append(max)
+                .append(", ")
+                .append("format: ")
+                .append(format)
                 .append("}");
         return builder.toString();
+    }
+
+    public String getFormat() {
+        return format;
     }
 }

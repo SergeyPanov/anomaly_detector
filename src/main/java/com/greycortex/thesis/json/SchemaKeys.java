@@ -11,6 +11,7 @@ public class SchemaKeys {
     // String
     public final static String MIN_LENGTH = "minLength";
     public final static String MAX_LENGTH = "maxLength";
+    public final static String FORMAT = "format";
 
     // Array
     public final static String ITEMS = "items";

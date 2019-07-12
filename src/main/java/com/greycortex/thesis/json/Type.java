@@ -1,10 +1,9 @@
 package com.greycortex.thesis.json;
 
-public enum Types {
+public enum Type {
     STRING("string"),
     NUMBER("number"),
     ARRAY("array"),
-    ARRAY_COMPLEX("complex_array"), // Array contains elements of different types
     OBJECT("object"),
     NULL("null"),
     BOOLEAN("boolean"),
@@ -12,10 +11,13 @@ public enum Types {
 
 
     private final String value;
-    private Types(String value) {
+    private Type(String value) {
         this.value = value;
     }
 
+    public static Type getEnum(String name) {
+        return Type.valueOf(name.toUpperCase());
+    }
     public String getValue() {
         return value;
     }

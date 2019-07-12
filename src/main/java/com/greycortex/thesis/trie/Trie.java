@@ -90,6 +90,7 @@ public class Trie {
                 } else {
                     Set<Type> complexType = value.getType();
                     // ARRAY/OBJECT are complex types
+
                     if (complexType.size() == 1) {
                         Type type = complexType.iterator().next();
                         switch (type) {
@@ -154,7 +155,6 @@ public class Trie {
                             nextInput.add(entry);
                         }
 
-
                         if (complexType.contains(Type.OBJECT)) {
                             JSONObject dummy = new JSONObject();
 
@@ -165,15 +165,21 @@ public class Trie {
                             nextInput.add(entry);
                         }
                         trieConstructStack.push(new Pair<>(auxNode, nextInput));
-
                     }
-
                 }
             }
         }
+        object = null;
+    }
 
-        return;
 
+    /**
+     * Merge this ad @tr
+     * @param tr the trie will be merged to this trie.
+     * @return merged trie
+     */
+    public Trie merge(Trie tr) {
+        return this;
     }
 
 

@@ -1,6 +1,7 @@
 package com.greycortex.thesis.json;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Set;
 
 public class JsonSimple extends JsonAbstract {
@@ -12,6 +13,9 @@ public class JsonSimple extends JsonAbstract {
     public JsonSimple(String name, Set<Type> type, String format) {
         super(name, type);
         this.format = format;
+    }
+    public JsonSimple(String name, Set<Type> type) {
+        this(name, type, null);
     }
 
     private JsonSimple() {
@@ -36,6 +40,27 @@ public class JsonSimple extends JsonAbstract {
         this.min = min;
     }
 
+    public String getFormat() {
+        return format;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        JsonSimple that = (JsonSimple) o;
+        return Objects.equals(max, that.max) &&
+                Objects.equals(min, that.min) &&
+                Objects.equals(format, that.format);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), max, min, format);
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -56,9 +81,5 @@ public class JsonSimple extends JsonAbstract {
                 .append(format)
                 .append("}");
         return builder.toString();
-    }
-
-    public String getFormat() {
-        return format;
     }
 }

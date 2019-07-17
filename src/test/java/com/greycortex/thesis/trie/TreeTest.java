@@ -7,7 +7,7 @@ import org.json.simple.parser.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TrieTest {
+public class TreeTest {
 
     /**
      * {
@@ -35,8 +35,8 @@ public class TrieTest {
                 "  \"additionalProperties\" : false\n" +
                 "}");
 
-        Trie trie = new Trie(new JsonWrapper(object));
-        Assert.assertEquals("{name: null, type: null, {name: numb1, type: [NUMBER], min: 0, max: null, format: null}, {name: numb2, type: [NUMBER], min: 0, max: null, format: null}}", trie.toString());
+        Tree tree = new Tree(new JsonWrapper(object));
+        Assert.assertEquals("{name: null, type: null, {name: numb1, type: [NUMBER], min: 0, max: null, format: null}, {name: numb2, type: [NUMBER], min: 0, max: null, format: null}}", tree.toString());
     }
 
 
@@ -65,8 +65,8 @@ public class TrieTest {
                 "  \"additionalProperties\" : false\n" +
                 "}");
 
-        Trie trie = new Trie((new JsonWrapper(object)));
-        Assert.assertEquals("{name: null, type: null, {name: array, type: [ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}}}", trie.toString());
+        Tree tree = new Tree((new JsonWrapper(object)));
+        Assert.assertEquals("{name: null, type: null, {name: array, type: [ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}}}", tree.toString());
     }
 
 
@@ -127,8 +127,8 @@ public class TrieTest {
                         "}"
         );
 
-        Trie trie = new Trie(new JsonWrapper(object));
-        Assert.assertEquals("{name: null, type: null, {name: arr, type: [ARRAY], {name: items, type: [ARRAY, INTEGER], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [ARRAY], {name: items, type: [ARRAY, INTEGER], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [ARRAY], {name: items, type: [ARRAY, INTEGER], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [ARRAY], {name: items, type: [STRING, INTEGER], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [STRING], min: 3, max: 3, format: null}}}}}}}}}}", trie.toString());
+        Tree tree = new Tree(new JsonWrapper(object));
+        Assert.assertEquals("{name: null, type: null, {name: arr, type: [ARRAY], {name: items, type: [INTEGER, ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [ARRAY], {name: items, type: [INTEGER, ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [ARRAY], {name: items, type: [INTEGER, ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [ARRAY], {name: items, type: [INTEGER, STRING], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [STRING], min: 3, max: 3, format: null}}}}}}}}}}", tree.toString());
     }
 
     /**
@@ -418,8 +418,8 @@ public class TrieTest {
                 "  \"additionalProperties\" : false\n" +
                 "}\n");
 
-        Trie trie = new Trie((new JsonWrapper(object)));
-        Assert.assertEquals("{name: null, type: null, {name: src_ip_addr, type: [STRING], min: 15, max: 15, format: ipv4}, {name: dst_octets, type: [INTEGER], min: 0, max: 32767, format: null}, {name: end_time, type: [STRING], min: 32, max: 32, format: date-time}, {name: src_domains, type: [NULL], min: null, max: null, format: null}, {name: start_time, type: [STRING], min: 32, max: 32, format: date-time}, {name: src_octets, type: [INTEGER], min: 0, max: 32767, format: null}, {name: src_app, type: [ARRAY], {name: items, type: [OBJECT], {name: new, type: [BOOLEAN], min: null, max: null, format: null}, {name: disposition, type: [STRING], min: 9, max: 9, format: null}, {name: filename, type: [STRING], min: 12, max: 12, format: null}, {name: access, type: [STRING], min: 6, max: 6, format: null}, {name: tree_id, type: [INTEGER], min: 0, max: 32767, format: null}, {name: session_id, type: [INTEGER], min: 0, max: 9223372036854775807, format: null}, {name: get_info, type: [OBJECT], {name: info_level, type: [STRING], min: 3, max: 4, format: null}, {name: fuid, type: [STRING], min: 36, max: 36, format: uuid}, {name: class, type: [STRING], min: 3, max: 9, format: null}}, {name: id, type: [INTEGER], min: 0, max: 32767, format: null}, {name: command, type: [STRING], min: 18, max: 28, format: null}}}, {name: dst_pktcnt, type: [INTEGER], min: 0, max: 32767, format: null}, {name: dst_ip_addr, type: [STRING], min: 13, max: 15, format: ipv4}, {name: service, type: [STRING], min: 3, max: 3, format: null}, {name: dst_port, type: [INTEGER], min: 0, max: 32767, format: null}, {name: dst_domains, type: [ARRAY], {name: items, type: [STRING], min: 23, max: 23, format: null}}, {name: dst_app, type: [ARRAY], {name: items, type: [OBJECT], {name: new, type: [BOOLEAN], min: null, max: null, format: null}, {name: status_code, type: [STRING], min: 3, max: 3, format: null}, {name: dialect, type: [STRING], min: 7, max: 7, format: null}, {name: tree_id, type: [INTEGER], min: 0, max: 32767, format: null}, {name: created, type: [INTEGER], min: 0, max: 2147483647, format: null}, {name: session_id, type: [INTEGER], min: 0, max: 9223372036854775807, format: null}, {name: accessed, type: [INTEGER], min: 0, max: 2147483647, format: null}, {name: size, type: [INTEGER], min: 0, max: 32767, format: null}, {name: modified, type: [INTEGER], min: 0, max: 2147483647, format: null}, {name: fuid, type: [STRING], min: 36, max: 36, format: uuid}, {name: get_info, type: [OBJECT], {name: is_directory, type: [BOOLEAN], min: null, max: null, format: null}, {name: delete_pending, type: [BOOLEAN], min: null, max: null, format: null}, {name: link_count, type: [INTEGER], min: 0, max: 9223372036854775807, format: null}, {name: eof, type: [INTEGER], min: 0, max: 9223372036854775807, format: null}, {name: allocation_size, type: [INTEGER], min: 0, max: 9223372036854775807, format: null}}, {name: id, type: [INTEGER], min: 0, max: 32767, format: null}, {name: changed, type: [INTEGER], min: 0, max: 2147483647, format: null}, {name: status, type: [STRING], min: 14, max: 14, format: null}}}, {name: src_pktcnt, type: [INTEGER], min: 0, max: 32767, format: null}, {name: apps, type: [NULL], min: null, max: null, format: null}}", trie.toString());
+        Tree tree = new Tree((new JsonWrapper(object)));
+        Assert.assertEquals("{name: null, type: null, {name: src_ip_addr, type: [STRING], min: 15, max: 15, format: ipv4}, {name: dst_octets, type: [INTEGER], min: 0, max: 32767, format: null}, {name: end_time, type: [STRING], min: 32, max: 32, format: date-time}, {name: src_domains, type: [NULL], min: null, max: null, format: null}, {name: start_time, type: [STRING], min: 32, max: 32, format: date-time}, {name: src_octets, type: [INTEGER], min: 0, max: 32767, format: null}, {name: src_app, type: [ARRAY], {name: items, type: [OBJECT], {name: new, type: [BOOLEAN], min: null, max: null, format: null}, {name: disposition, type: [STRING], min: 9, max: 9, format: null}, {name: filename, type: [STRING], min: 12, max: 12, format: null}, {name: access, type: [STRING], min: 6, max: 6, format: null}, {name: tree_id, type: [INTEGER], min: 0, max: 32767, format: null}, {name: session_id, type: [INTEGER], min: 0, max: 9223372036854775807, format: null}, {name: get_info, type: [OBJECT], {name: info_level, type: [STRING], min: 3, max: 4, format: null}, {name: fuid, type: [STRING], min: 36, max: 36, format: uuid}, {name: class, type: [STRING], min: 3, max: 9, format: null}}, {name: id, type: [INTEGER], min: 0, max: 32767, format: null}, {name: command, type: [STRING], min: 18, max: 28, format: null}}}, {name: dst_pktcnt, type: [INTEGER], min: 0, max: 32767, format: null}, {name: dst_ip_addr, type: [STRING], min: 13, max: 15, format: ipv4}, {name: service, type: [STRING], min: 3, max: 3, format: null}, {name: dst_port, type: [INTEGER], min: 0, max: 32767, format: null}, {name: dst_domains, type: [ARRAY], {name: items, type: [STRING], min: 23, max: 23, format: null}}, {name: dst_app, type: [ARRAY], {name: items, type: [OBJECT], {name: new, type: [BOOLEAN], min: null, max: null, format: null}, {name: status_code, type: [STRING], min: 3, max: 3, format: null}, {name: dialect, type: [STRING], min: 7, max: 7, format: null}, {name: tree_id, type: [INTEGER], min: 0, max: 32767, format: null}, {name: created, type: [INTEGER], min: 0, max: 2147483647, format: null}, {name: session_id, type: [INTEGER], min: 0, max: 9223372036854775807, format: null}, {name: accessed, type: [INTEGER], min: 0, max: 2147483647, format: null}, {name: size, type: [INTEGER], min: 0, max: 32767, format: null}, {name: modified, type: [INTEGER], min: 0, max: 2147483647, format: null}, {name: fuid, type: [STRING], min: 36, max: 36, format: uuid}, {name: get_info, type: [OBJECT], {name: is_directory, type: [BOOLEAN], min: null, max: null, format: null}, {name: delete_pending, type: [BOOLEAN], min: null, max: null, format: null}, {name: link_count, type: [INTEGER], min: 0, max: 9223372036854775807, format: null}, {name: eof, type: [INTEGER], min: 0, max: 9223372036854775807, format: null}, {name: allocation_size, type: [INTEGER], min: 0, max: 9223372036854775807, format: null}}, {name: id, type: [INTEGER], min: 0, max: 32767, format: null}, {name: changed, type: [INTEGER], min: 0, max: 2147483647, format: null}, {name: status, type: [STRING], min: 14, max: 14, format: null}}}, {name: src_pktcnt, type: [INTEGER], min: 0, max: 32767, format: null}, {name: apps, type: [NULL], min: null, max: null, format: null}}", tree.toString());
     }
 
     /**
@@ -492,8 +492,8 @@ public class TrieTest {
                         "  \"additionalProperties\" : false\n" +
                         "}");
 
-        Trie trie = new Trie(new JsonWrapper(object));
-        Assert.assertEquals("{name: null, type: null, {name: obj, type: [OBJECT], {name: ob, type: [OBJECT], {name: a, type: [INTEGER], min: 0, max: 32767, format: null}, {name: inob, type: [OBJECT], {name: b, type: [INTEGER], min: 0, max: 32767, format: null}}}, {name: el2, type: [STRING], min: 10, max: 10, format: null}, {name: el1, type: [STRING], min: 3, max: 3, format: null}, {name: el3, type: [NUMBER], min: 0, max: null, format: null}}}", trie.toString());
+        Tree tree = new Tree(new JsonWrapper(object));
+        Assert.assertEquals("{name: null, type: null, {name: obj, type: [OBJECT], {name: ob, type: [OBJECT], {name: a, type: [INTEGER], min: 0, max: 32767, format: null}, {name: inob, type: [OBJECT], {name: b, type: [INTEGER], min: 0, max: 32767, format: null}}}, {name: el2, type: [STRING], min: 10, max: 10, format: null}, {name: el1, type: [STRING], min: 3, max: 3, format: null}, {name: el3, type: [NUMBER], min: 0, max: null, format: null}}}", tree.toString());
     }
 
 
@@ -577,8 +577,8 @@ public class TrieTest {
                         "  },\n" +
                         "  \"additionalProperties\" : false\n" +
                         "}");
-        Trie trie = new Trie(new JsonWrapper(object));
-        Assert.assertEquals("{name: null, type: null, {name: obj, type: [OBJECT], {name: ob, type: [OBJECT], {name: a, type: [INTEGER], min: 0, max: 32767, format: null}, {name: inob, type: [OBJECT], {name: b, type: [INTEGER], min: 0, max: 32767, format: null}}}, {name: el2, type: [STRING], min: 10, max: 10, format: null}, {name: el1, type: [STRING], min: 3, max: 3, format: null}, {name: el3, type: [NUMBER], min: 0, max: null, format: null}}, {name: aotherSimple, type: [NUMBER], min: 0, max: null, format: null}, {name: simpleEl, type: [STRING], min: 11, max: 11, format: null}}", trie.toString());
+        Tree tree = new Tree(new JsonWrapper(object));
+        Assert.assertEquals("{name: null, type: null, {name: obj, type: [OBJECT], {name: ob, type: [OBJECT], {name: a, type: [INTEGER], min: 0, max: 32767, format: null}, {name: inob, type: [OBJECT], {name: b, type: [INTEGER], min: 0, max: 32767, format: null}}}, {name: el2, type: [STRING], min: 10, max: 10, format: null}, {name: el1, type: [STRING], min: 3, max: 3, format: null}, {name: el3, type: [NUMBER], min: 0, max: null, format: null}}, {name: aotherSimple, type: [NUMBER], min: 0, max: null, format: null}, {name: simpleEl, type: [STRING], min: 11, max: 11, format: null}}", tree.toString());
     }
 
     /**
@@ -632,8 +632,8 @@ public class TrieTest {
                 "  \"additionalProperties\" : false\n" +
                 "}");
 
-        Trie trie = new Trie(new JsonWrapper(object));
-        Assert.assertEquals("{name: null, type: null, {name: obarray, type: [ARRAY], {name: items, type: [OBJECT], {name: el2, type: [INTEGER], min: 0, max: 32767, format: null}, {name: el1, type: [INTEGER], min: 0, max: 32767, format: null}, {name: el3, type: [INTEGER], min: 0, max: 32767, format: null}}}}", trie.toString());
+        Tree tree = new Tree(new JsonWrapper(object));
+        Assert.assertEquals("{name: null, type: null, {name: obarray, type: [ARRAY], {name: items, type: [OBJECT], {name: el2, type: [INTEGER], min: 0, max: 32767, format: null}, {name: el1, type: [INTEGER], min: 0, max: 32767, format: null}, {name: el3, type: [INTEGER], min: 0, max: 32767, format: null}}}}", tree.toString());
     }
 
 
@@ -796,8 +796,8 @@ public class TrieTest {
                         "  \"additionalProperties\" : false\n" +
                         "}"
         );
-        Trie trie = new Trie(new JsonWrapper(object));
-        Assert.assertEquals("{name: null, type: null, {name: arr, type: [ARRAY], {name: items, type: [STRING, NULL, ARRAY, NUMBER, BOOLEAN, OBJECT], {name: items, type: [INTEGER], min: 0, max: null, format: null}, {name: items, type: [STRING], min: 3, max: 9, format: null}, {name: items, type: [ARRAY], {name: items, type: [STRING, ARRAY, NUMBER, OBJECT], {name: items, type: [INTEGER], min: 0, max: null, format: null}, {name: items, type: [STRING], min: 3, max: 9, format: null}, {name: items, type: [ARRAY], {name: items, type: [ARRAY, INTEGER], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}}}}, {name: items, type: [OBJECT], {name: shit, type: [INTEGER], min: 0, max: 32767, format: null}, {name: one, type: [INTEGER], min: 0, max: 32767, format: null}, {name: asdasd, type: [NUMBER], min: 0, max: null, format: null}, {name: two, type: [INTEGER, OBJECT], {name: two, type: [INTEGER], min: 0, max: 32767, format: null}, {name: two, type: [OBJECT], {name: inn, type: [INTEGER], min: 0, max: 32767, format: null}}}}}}, {name: items, type: [OBJECT], {name: shit, type: [INTEGER], min: 0, max: 32767, format: null}, {name: one, type: [INTEGER], min: 0, max: 32767, format: null}, {name: asdasd, type: [NUMBER], min: 0, max: null, format: null}, {name: two, type: [INTEGER, OBJECT], {name: two, type: [INTEGER], min: 0, max: 32767, format: null}, {name: two, type: [OBJECT], {name: inn, type: [INTEGER], min: 0, max: 32767, format: null}}}}}}}", trie.toString());
+        Tree tree = new Tree(new JsonWrapper(object));
+        Assert.assertEquals("{name: null, type: null, {name: arr, type: [ARRAY], {name: items, type: [NULL, OBJECT, NUMBER, ARRAY, STRING, BOOLEAN], {name: items, type: [INTEGER], min: 0, max: null, format: null}, {name: items, type: [STRING], min: 3, max: 9, format: null}, {name: items, type: [ARRAY], {name: items, type: [OBJECT, NUMBER, ARRAY, STRING], {name: items, type: [INTEGER], min: 0, max: null, format: null}, {name: items, type: [STRING], min: 3, max: 9, format: null}, {name: items, type: [ARRAY], {name: items, type: [INTEGER, ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}}}}, {name: items, type: [OBJECT], {name: shit, type: [INTEGER], min: 0, max: 32767, format: null}, {name: one, type: [INTEGER], min: 0, max: 32767, format: null}, {name: asdasd, type: [NUMBER], min: 0, max: null, format: null}, {name: two, type: [OBJECT, INTEGER], {name: two, type: [INTEGER], min: 0, max: 32767, format: null}, {name: two, type: [OBJECT], {name: inn, type: [INTEGER], min: 0, max: 32767, format: null}}}}}}, {name: items, type: [OBJECT], {name: shit, type: [INTEGER], min: 0, max: 32767, format: null}, {name: one, type: [INTEGER], min: 0, max: 32767, format: null}, {name: asdasd, type: [NUMBER], min: 0, max: null, format: null}, {name: two, type: [OBJECT, INTEGER], {name: two, type: [INTEGER], min: 0, max: 32767, format: null}, {name: two, type: [OBJECT], {name: inn, type: [INTEGER], min: 0, max: 32767, format: null}}}}}}}", tree.toString());
     }
 
 
@@ -820,8 +820,8 @@ public class TrieTest {
                         "}"
         );
 
-        Trie trie = new Trie(new JsonWrapper(object));
-        Assert.assertEquals("{name: null, type: null, {name: bl, type: [BOOLEAN], min: null, max: null, format: null}, {name: nl, type: [NULL], min: null, max: null, format: null}}", trie.toString());
+        Tree tree = new Tree(new JsonWrapper(object));
+        Assert.assertEquals("{name: null, type: null, {name: bl, type: [BOOLEAN], min: null, max: null, format: null}, {name: nl, type: [NULL], min: null, max: null, format: null}}", tree.toString());
     }
 
 }

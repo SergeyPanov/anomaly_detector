@@ -21,4 +21,7 @@ public enum Type {
     public String getValue() {
         return value;
     }
+    public boolean isSimple() {
+        return Type.valueOf(name()) != OBJECT && Type.valueOf(name()) != ARRAY;
+    }
 }

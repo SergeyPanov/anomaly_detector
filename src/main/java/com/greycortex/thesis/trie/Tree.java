@@ -1,7 +1,8 @@
 package com.greycortex.thesis.trie;
 
 import com.greycortex.thesis.json.*;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.json.simple.JSONObject;
 
 import java.util.AbstractMap;
@@ -9,15 +10,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-public class Trie {
+public class Tree {
     private JsonWrapper object;
 
     private JsonComplex root;
 
-    public Trie(JsonWrapper object) {
+    public Tree(JsonWrapper object) {
         this.object = object;
         root = new JsonComplex();
         init();
+    }
+
+    public JsonComplex getRoot() {
+        return root;
     }
 
 
@@ -53,7 +58,7 @@ public class Trie {
 
 
         Stack<Pair<JsonComplex, Stack<Map.Entry>>> trieConstructStack = new Stack<>();   // First is root, second are children
-        trieConstructStack.push(new Pair<>(root, inputStack));
+        trieConstructStack.push(new MutablePair<>(root, inputStack));
 
         while (!trieConstructStack.isEmpty()) {
 
@@ -98,7 +103,7 @@ public class Trie {
                                 currentRoot.add(0, auxNode);
                                 Stack<Map.Entry> nextInput = new Stack<>();
                                 nextInput.addAll(value.getWrapped(SchemaKeys.PROPERTIES).entrySet());
-                                trieConstructStack.push(new Pair<>(auxNode, nextInput));
+                                trieConstructStack.push(new MutablePair<>(auxNode, nextInput));
                                 break;
                             case ARRAY:
                                 auxNode = new JsonComplex(name, value.getType());
@@ -106,7 +111,7 @@ public class Trie {
                                 nextInput = new Stack<>();
                                 Map.Entry<String, JSONObject> entry = new AbstractMap.SimpleEntry<>(SchemaKeys.ITEMS, value.getWrapped(SchemaKeys.ITEMS).getObject());
                                 nextInput.add(entry);
-                                trieConstructStack.push(new Pair<>(auxNode, nextInput));
+                                trieConstructStack.push(new MutablePair<>(auxNode, nextInput));
                                 break;
                             default:
                                 break;
@@ -164,15 +169,32 @@ public class Trie {
                             Map.Entry<String, JSONObject> entry = new AbstractMap.SimpleEntry<>(name, dummy);
                             nextInput.add(entry);
                         }
-                        trieConstructStack.push(new Pair<>(auxNode, nextInput));
+                        trieConstructStack.push(new MutablePair<>(auxNode, nextInput));
 
                     }
 
                 }
             }
         }
+    }
 
-        return;
+    /**
+     * Generate schema from trie.
+     */
+    public void generateSchema() {
+
+        Stack<JsonComplex> stack = new Stack<>();
+        stack.push(root);
+
+        while (!stack.empty()) {
+            JsonComplex currentRoot = stack.pop();
+            currentRoot.getTable();
+            /*
+            TODO: тут надо хронить пару: указатель на отца и его сына, устанавливать указатели на соответствующие объекты.
+            Как в методе init()
+             */
+        }
+
 
     }
 

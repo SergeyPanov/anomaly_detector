@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "num": 1,
+  "str1": "string",
+  "arrNums": [1,2,3,4],
+  "arrStrs": ["1", "2"],
+  "ob": {
+    "id": 1,
+    "num1": 1
+  },
+  "arrOb": [{"inn":  1}, {"inn":  2}, {"inn":  1}]
+}

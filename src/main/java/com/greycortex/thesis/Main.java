@@ -2,7 +2,7 @@ package com.greycortex.thesis;
 
 
 import com.greycortex.thesis.json.JsonWrapper;
-import com.greycortex.thesis.trie.Trie;
+import com.greycortex.thesis.trie.Tree;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -25,7 +25,7 @@ public class Main {
                 try (Reader reader = new FileReader(fl.getAbsoluteFile())){
                     JSONObject object = (JSONObject) parser.parse(reader);
                     JsonWrapper wrapper = new JsonWrapper(object);
-                    Trie trie = new Trie(wrapper);
+                    Tree tree = new Tree(wrapper);
                 } catch (ParseException | IOException e) {
                     e.printStackTrace();
                 }

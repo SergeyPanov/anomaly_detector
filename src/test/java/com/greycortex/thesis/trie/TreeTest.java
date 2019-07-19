@@ -1,11 +1,20 @@
 package com.greycortex.thesis.trie;
 
+import com.greycortex.thesis.json.JsonComplex;
+import com.greycortex.thesis.json.JsonSimple;
 import com.greycortex.thesis.json.JsonWrapper;
+import com.greycortex.thesis.json.Type;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
+
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+
 
 public class TreeTest {
 
@@ -34,9 +43,27 @@ public class TreeTest {
                 "  },\n" +
                 "  \"additionalProperties\" : false\n" +
                 "}");
-
         Tree tree = new Tree(new JsonWrapper(object));
-        Assert.assertEquals("{name: null, type: null, {name: numb1, type: [NUMBER], min: 0, max: null, format: null}, {name: numb2, type: [NUMBER], min: 0, max: null, format: null}}", tree.toString());
+
+        Node root = new Node(new JsonComplex(null, null));
+
+        JsonSimple smpl = new JsonSimple("numb1", new HashSet<>(Collections.singletonList(Type.NUMBER)));
+        smpl.setMin(0L);
+
+
+        Node numb1 = new Node(smpl);
+
+        smpl = new JsonSimple("numb2", new HashSet<>(Collections.singletonList(Type.NUMBER)));
+        smpl.setMin(0L);
+
+        Node numb2 = new Node(smpl);
+
+        root.add(0, numb2);
+        root.add(0, numb1);
+
+        Tree expectedTree = new Tree(root);
+
+        Assert.assertEquals(expectedTree, tree);
     }
 
 
@@ -66,7 +93,22 @@ public class TreeTest {
                 "}");
 
         Tree tree = new Tree((new JsonWrapper(object)));
-        Assert.assertEquals("{name: null, type: null, {name: array, type: [ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}}}", tree.toString());
+
+
+        Node root = new Node(new JsonComplex(null, null));
+        Node arr = new Node(new JsonComplex("array", new HashSet<>(Collections.singletonList(Type.ARRAY))));
+
+        JsonSimple items = new JsonSimple("array_items", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        items.setMin(0L);
+        items.setMax(32767L);
+
+
+        arr.add(new Node(items));
+
+        root.add(arr);
+        Tree expectedTree = new Tree(root);
+
+        Assert.assertEquals(expectedTree, tree);
     }
 
 
@@ -128,47 +170,94 @@ public class TreeTest {
         );
 
         Tree tree = new Tree(new JsonWrapper(object));
+
+        JsonComplex arr = new JsonComplex("arr", new HashSet<>(Collections.singletonList(Type.ARRAY)));
+
+        JsonComplex arrItems = new JsonComplex("arr_items", new HashSet<>(Arrays.asList(Type.INTEGER, Type.ARRAY)));
+        JsonSimple arrItemsInt = new JsonSimple("arr_items", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        arrItemsInt.setMin(0L);
+        arrItemsInt.setMax(32767L);
+        JsonComplex arrItemsArr = new JsonComplex("arr_items", new HashSet<>(Collections.singletonList(Type.ARRAY)));
+        arrItems.add(arrItemsInt);
+        arrItems.add(arrItemsArr);
+
+
+
+        JsonComplex arrItemsItems = new JsonComplex("arr_items_items", new HashSet<>(Arrays.asList(Type.INTEGER, Type.ARRAY)));
+        JsonSimple arrItemsItemsInt = new JsonSimple("arr_items_items", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        arrItemsItemsInt.setMin(0L);
+        arrItemsItemsInt.setMax(32767L);
+        JsonComplex arrItemsItemsArr = new JsonComplex("arr_items_items", new HashSet<>(Arrays.asList(Type.INTEGER, Type.ARRAY)));
+        arrItemsItems.add(arrItemsItemsInt);
+        arrItemsItems.add(arrItemsItemsArr);
+
+        JsonComplex arrItemsItemsItems = new JsonComplex("arr_items_items_items", new HashSet<>(Arrays.asList(Type.INTEGER, Type.ARRAY)));
+        JsonSimple arrItemsItemsItemsInt = new JsonSimple("arr_items_items_items", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        arrItemsItemsItemsInt.setMin(0L);
+        arrItemsItemsItemsInt.setMax(32767L);
+        JsonComplex arrItemsItemsItemsArr = new JsonComplex("arr_items_items_items", new HashSet<>(Arrays.asList(Type.INTEGER, Type.ARRAY)));
+        arrItemsItemsItems.add(arrItemsItemsItemsInt);
+        arrItemsItemsItems.add(arrItemsItemsItemsArr);
+
+
+
+        JsonComplex arrItemsItemsItemsItems = new JsonComplex("arr_items_items_items_items", new HashSet<>(Arrays.asList(Type.INTEGER, Type.STRING)));
+        JsonSimple arrItemsItemsItemsItemsInt = new JsonSimple("arr_items_items_items_items", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        arrItemsItemsItemsItemsInt.setMin(0L);
+        arrItemsItemsItemsItemsInt.setMax(32767L);
+        JsonSimple arrItemsItemsItemsItemsStr = new JsonSimple("arr_items_items_items_items", new HashSet<>(Collections.singletonList(Type.STRING)));
+        arrItemsItemsItemsItemsStr.setMin(3L);
+        arrItemsItemsItemsItemsStr.setMax(3L);
+
+        arrItemsItemsItemsItems.add(arrItemsItemsItemsItemsInt);
+        arrItemsItemsItemsItems.add(arrItemsItemsItemsItemsStr);
+
+        Node arrItemsItemsItemsItemsNd = new Node(arrItemsItemsItemsItems);
+        arrItemsItemsItemsItemsNd.add(new Node(arrItemsItemsItemsItemsInt));
+        arrItemsItemsItemsItemsNd.add(new Node(arrItemsItemsItemsItemsStr));
+
         Assert.assertEquals("{name: null, type: null, {name: arr, type: [ARRAY], {name: items, type: [INTEGER, ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [ARRAY], {name: items, type: [INTEGER, ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [ARRAY], {name: items, type: [INTEGER, ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [ARRAY], {name: items, type: [INTEGER, STRING], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [STRING], min: 3, max: 3, format: null}}}}}}}}}}", tree.toString());
     }
 
     /**
-     *   {
-     *     "start_time": "2019-05-07T14:47:04.000429+02:00",
-     *     "end_time": "2019-05-07T14:48:05.636545+02:00",
-     *     "src_ip_addr": "192.168.137.250",
-     *     "dst_ip_addr": "192.168.137.5",
-     *     "src_domains": null,
-     *     "dst_domains": [
-     *       "win-server2019.gc.local"
-     *     ],
-     *     "dst_port": 445,
-     *     "service": "SMB",
-     *     "apps": null,
-     *     "src_pktcnt": 11,
-     *     "dst_pktcnt": 10,
-     *     "src_octets": 1490,
-     *     "dst_octets": 1650,
-     *     "src_app": [
-     *       {"new":true,"id":1,"tree_id":0,"session_id":0,"command":"SMB2_COMMAND_KEEPALIVE"},
-     *       {"new":true,"id":2,"tree_id":1,"session_id":70378407854117,"command":"SMB2_COMMAND_CREATE","filename":"<share_root>","disposition":"FILE_OPEN","access":"normal"},
-     *       {"new":true,"id":3,"tree_id":1,"session_id":70378407854117,"command":"SMB2_COMMAND_GET_INFO","get_info":{"class":"FILE_INFO","info_level":"0x12","fuid":"00004cc4-0010-0000-0001-000000000010"}},
-     *       {"new":true,"id":4,"tree_id":1,"session_id":70378407854117,"command":"SMB2_COMMAND_CREATE","filename":"<share_root>","disposition":"FILE_OPEN","access":"normal"},
-     *       {"new":true,"id":5,"tree_id":1,"session_id":70378407854117,"command":"SMB2_COMMAND_GET_INFO","get_info":{"class":"0x2","info_level":"0x7","fuid":"ffffffff-ffff-ffff-ffff-ffffffffffff"}},
-     *       {"new":true,"id":6,"tree_id":1,"session_id":70378407854117,"command":"SMB2_COMMAND_CLOSE"},
-     *       {"new":true,"id":7,"tree_id":1,"session_id":70378407854117,"command":"SMB2_COMMAND_TREE_DISCONNECT"},
-     *       {"new":true,"id":8,"tree_id":0,"session_id":70378407854117,"command":"SMB2_COMMAND_SESSION_LOGOFF"}
-     *     ],
-     *     "dst_app": [
-     *       {"new":true,"id":1,"tree_id":0,"session_id":0,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0"},
-     *       {"new":true,"id":2,"tree_id":1,"session_id":70378407854117,"created":1550655519,"accessed":1557222021,"modified":1557222021,"changed":1557222021,"size":4096,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0","fuid":"00004cc4-0010-0000-0001-000000000010"},
-     *       {"new":true,"id":3,"tree_id":1,"session_id":70378407854117,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0","get_info":{"allocation_size":131951291195371385,"eof":132016956217536501,"link_count":3819745269,"delete_pending":true,"is_directory":true}},
-     *       {"new":true,"id":4,"tree_id":1,"session_id":70378407854117,"created":1550655519,"accessed":1557222021,"modified":1557222021,"changed":1557222021,"size":4096,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0","fuid":"00004cc5-0010-0000-0005-000000000010"},
-     *       {"new":true,"id":5,"tree_id":1,"session_id":70378407854117,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0","get_info":{"allocation_size":8247551,"eof":1478150,"link_count":1478150,"delete_pending":false,"is_directory":false}},
-     *       {"new":true,"id":6,"tree_id":1,"session_id":70378407854117,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0"},
-     *       {"new":true,"id":7,"tree_id":1,"session_id":70378407854117,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0"},
-     *       {"new":true,"id":8,"tree_id":0,"session_id":70378407854117,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0"}
-     *     ]
-     *   }
+     * {
+     * "start_time": "2019-05-07T14:47:04.000429+02:00",
+     * "end_time": "2019-05-07T14:48:05.636545+02:00",
+     * "src_ip_addr": "192.168.137.250",
+     * "dst_ip_addr": "192.168.137.5",
+     * "src_domains": null,
+     * "dst_domains": [
+     * "win-server2019.gc.local"
+     * ],
+     * "dst_port": 445,
+     * "service": "SMB",
+     * "apps": null,
+     * "src_pktcnt": 11,
+     * "dst_pktcnt": 10,
+     * "src_octets": 1490,
+     * "dst_octets": 1650,
+     * "src_app": [
+     * {"new":true,"id":1,"tree_id":0,"session_id":0,"command":"SMB2_COMMAND_KEEPALIVE"},
+     * {"new":true,"id":2,"tree_id":1,"session_id":70378407854117,"command":"SMB2_COMMAND_CREATE","filename":"<share_root>","disposition":"FILE_OPEN","access":"normal"},
+     * {"new":true,"id":3,"tree_id":1,"session_id":70378407854117,"command":"SMB2_COMMAND_GET_INFO","get_info":{"class":"FILE_INFO","info_level":"0x12","fuid":"00004cc4-0010-0000-0001-000000000010"}},
+     * {"new":true,"id":4,"tree_id":1,"session_id":70378407854117,"command":"SMB2_COMMAND_CREATE","filename":"<share_root>","disposition":"FILE_OPEN","access":"normal"},
+     * {"new":true,"id":5,"tree_id":1,"session_id":70378407854117,"command":"SMB2_COMMAND_GET_INFO","get_info":{"class":"0x2","info_level":"0x7","fuid":"ffffffff-ffff-ffff-ffff-ffffffffffff"}},
+     * {"new":true,"id":6,"tree_id":1,"session_id":70378407854117,"command":"SMB2_COMMAND_CLOSE"},
+     * {"new":true,"id":7,"tree_id":1,"session_id":70378407854117,"command":"SMB2_COMMAND_TREE_DISCONNECT"},
+     * {"new":true,"id":8,"tree_id":0,"session_id":70378407854117,"command":"SMB2_COMMAND_SESSION_LOGOFF"}
+     * ],
+     * "dst_app": [
+     * {"new":true,"id":1,"tree_id":0,"session_id":0,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0"},
+     * {"new":true,"id":2,"tree_id":1,"session_id":70378407854117,"created":1550655519,"accessed":1557222021,"modified":1557222021,"changed":1557222021,"size":4096,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0","fuid":"00004cc4-0010-0000-0001-000000000010"},
+     * {"new":true,"id":3,"tree_id":1,"session_id":70378407854117,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0","get_info":{"allocation_size":131951291195371385,"eof":132016956217536501,"link_count":3819745269,"delete_pending":true,"is_directory":true}},
+     * {"new":true,"id":4,"tree_id":1,"session_id":70378407854117,"created":1550655519,"accessed":1557222021,"modified":1557222021,"changed":1557222021,"size":4096,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0","fuid":"00004cc5-0010-0000-0005-000000000010"},
+     * {"new":true,"id":5,"tree_id":1,"session_id":70378407854117,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0","get_info":{"allocation_size":8247551,"eof":1478150,"link_count":1478150,"delete_pending":false,"is_directory":false}},
+     * {"new":true,"id":6,"tree_id":1,"session_id":70378407854117,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0"},
+     * {"new":true,"id":7,"tree_id":1,"session_id":70378407854117,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0"},
+     * {"new":true,"id":8,"tree_id":0,"session_id":70378407854117,"dialect":"unknown","status":"STATUS_SUCCESS","status_code":"0x0"}
+     * ]
+     * }
+     *
      * @throws ParseException
      */
     @Test
@@ -639,65 +728,66 @@ public class TreeTest {
 
     /**
      * {
-     *   "arr": [
-     *     1,
-     *     2,
-     *     3.2,
-     *     "fst",
-     *     "asdasdasd",
-     *     [
-     *       [
-     *         1
-     *       ]
-     *     ],
-     *     {
-     *       "asdasd": 1.3
-     *     },
-     *     {
-     *       "one": 2,
-     *       "two": {
-     *         "inn": 1
-     *       }
-     *     },
-     *     {
-     *       "two": 2
-     *     },
-     *     {
-     *       "shit": 1
-     *     },
-     *     [
-     *       1,
-     *       2,
-     *       3.2,
-     *       "fst",
-     *       "asdasdasd",
-     *       [
-     *         [
-     *           1
-     *         ],
-     *         1
-     *       ],
-     *       {
-     *         "asdasd": 1.3
-     *       },
-     *       {
-     *         "one": 2,
-     *         "two": {
-     *           "inn": 1
-     *         }
-     *       },
-     *       {
-     *         "two": 2
-     *       },
-     *       {
-     *         "shit": 1
-     *       }
-     *     ],
-     *     null,
-     *     false,
-     *     true
-     *   ]
+     * "arr": [
+     * 1,
+     * 2,
+     * 3.2,
+     * "fst",
+     * "asdasdasd",
+     * [
+     * [
+     * 1
+     * ]
+     * ],
+     * {
+     * "asdasd": 1.3
+     * },
+     * {
+     * "one": 2,
+     * "two": {
+     * "inn": 1
      * }
+     * },
+     * {
+     * "two": 2
+     * },
+     * {
+     * "shit": 1
+     * },
+     * [
+     * 1,
+     * 2,
+     * 3.2,
+     * "fst",
+     * "asdasdasd",
+     * [
+     * [
+     * 1
+     * ],
+     * 1
+     * ],
+     * {
+     * "asdasd": 1.3
+     * },
+     * {
+     * "one": 2,
+     * "two": {
+     * "inn": 1
+     * }
+     * },
+     * {
+     * "two": 2
+     * },
+     * {
+     * "shit": 1
+     * }
+     * ],
+     * null,
+     * false,
+     * true
+     * ]
+     * }
+     *
      * @throws ParseException
      */
     @Test
@@ -799,7 +889,6 @@ public class TreeTest {
         Tree tree = new Tree(new JsonWrapper(object));
         Assert.assertEquals("{name: null, type: null, {name: arr, type: [ARRAY], {name: items, type: [NULL, OBJECT, NUMBER, ARRAY, STRING, BOOLEAN], {name: items, type: [INTEGER], min: 0, max: null, format: null}, {name: items, type: [STRING], min: 3, max: 9, format: null}, {name: items, type: [ARRAY], {name: items, type: [OBJECT, NUMBER, ARRAY, STRING], {name: items, type: [INTEGER], min: 0, max: null, format: null}, {name: items, type: [STRING], min: 3, max: 9, format: null}, {name: items, type: [ARRAY], {name: items, type: [INTEGER, ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}, {name: items, type: [ARRAY], {name: items, type: [INTEGER], min: 0, max: 32767, format: null}}}}, {name: items, type: [OBJECT], {name: shit, type: [INTEGER], min: 0, max: 32767, format: null}, {name: one, type: [INTEGER], min: 0, max: 32767, format: null}, {name: asdasd, type: [NUMBER], min: 0, max: null, format: null}, {name: two, type: [OBJECT, INTEGER], {name: two, type: [INTEGER], min: 0, max: 32767, format: null}, {name: two, type: [OBJECT], {name: inn, type: [INTEGER], min: 0, max: 32767, format: null}}}}}}, {name: items, type: [OBJECT], {name: shit, type: [INTEGER], min: 0, max: 32767, format: null}, {name: one, type: [INTEGER], min: 0, max: 32767, format: null}, {name: asdasd, type: [NUMBER], min: 0, max: null, format: null}, {name: two, type: [OBJECT, INTEGER], {name: two, type: [INTEGER], min: 0, max: 32767, format: null}, {name: two, type: [OBJECT], {name: inn, type: [INTEGER], min: 0, max: 32767, format: null}}}}}}}", tree.toString());
     }
-
 
 
     @Test

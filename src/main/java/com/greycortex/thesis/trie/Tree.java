@@ -1,30 +1,31 @@
 package com.greycortex.thesis.trie;
 
 import com.greycortex.thesis.json.*;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.simple.JSONObject;
 
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 public class Tree {
     private JsonWrapper object;
 
-    private JsonComplex root;
+    private Node root;
 
     public Tree(JsonWrapper object) {
-        this.object = object;
-        root = new JsonComplex();
+        this.object = object;;
+        root = new Node(new JsonComplex());
         init();
     }
 
-    public JsonComplex getRoot() {
-        return root;
+    public Tree(Node root) {
+        this.root = root;
     }
 
+    public Node getRoot() {
+        return root;
+    }
 
     /**
      * If @type contains more than 1 element or OBJECT/ARRAY then the type is complex.
@@ -47,7 +48,7 @@ public class Tree {
     private void init() {
 
         JsonWrapper properties = object.getWrapped(SchemaKeys.PROPERTIES);
-        if (properties == null) {
+        if (properties == null) { ;
             root = null;
             return;
         }
@@ -57,14 +58,14 @@ public class Tree {
         inputStack.addAll(properties.entrySet());
 
 
-        Stack<Pair<JsonComplex, Stack<Map.Entry>>> trieConstructStack = new Stack<>();   // First is root, second are children
+        Stack<Pair<Node, Stack<Map.Entry>>> trieConstructStack = new Stack<>();   // First is root, second are children
         trieConstructStack.push(new MutablePair<>(root, inputStack));
 
         while (!trieConstructStack.isEmpty()) {
 
             Pair pr = trieConstructStack.pop();
 
-            JsonComplex currentRoot = (JsonComplex) pr.getKey();
+            Node currentRoot = (Node) pr.getKey();
 
             Stack values = (Stack) pr.getValue();
 
@@ -90,7 +91,7 @@ public class Tree {
                     simpleElement.setMax(value.getNumber(maxK, null));
                     simpleElement.setMin(value.getNumber(minK, null));
 
-                    currentRoot.add(0, simpleElement);
+                    currentRoot.add(0, new Node(simpleElement));
 
                 } else {
                     Set<Type> complexType = value.getType();
@@ -99,17 +100,17 @@ public class Tree {
                         Type type = complexType.iterator().next();
                         switch (type) {
                             case OBJECT:
-                                JsonComplex auxNode = new JsonComplex(name, value.getType());
+                                Node auxNode = new Node(new JsonComplex(name, value.getType()));
                                 currentRoot.add(0, auxNode);
                                 Stack<Map.Entry> nextInput = new Stack<>();
                                 nextInput.addAll(value.getWrapped(SchemaKeys.PROPERTIES).entrySet());
                                 trieConstructStack.push(new MutablePair<>(auxNode, nextInput));
                                 break;
                             case ARRAY:
-                                auxNode = new JsonComplex(name, value.getType());
+                                auxNode = new Node(new JsonComplex(name, value.getType()));
                                 currentRoot.add(0, auxNode);
                                 nextInput = new Stack<>();
-                                Map.Entry<String, JSONObject> entry = new AbstractMap.SimpleEntry<>(SchemaKeys.ITEMS, value.getWrapped(SchemaKeys.ITEMS).getObject());
+                                Map.Entry<String, JSONObject> entry = new AbstractMap.SimpleEntry<>( name + "_" + SchemaKeys.ITEMS, value.getWrapped(SchemaKeys.ITEMS).getObject());
                                 nextInput.add(entry);
                                 trieConstructStack.push(new MutablePair<>(auxNode, nextInput));
                                 break;
@@ -117,7 +118,8 @@ public class Tree {
                                 break;
                         }
                     } else {
-                        JsonComplex auxNode = new JsonComplex(name, value.getType());
+                        // Heterogeneous array
+                        Node auxNode = new Node(new JsonComplex(name, value.getType()));
                         currentRoot.add(0, auxNode);
                         Stack<Map.Entry> nextInput = new Stack<>();
 
@@ -178,26 +180,18 @@ public class Tree {
         }
     }
 
-    /**
-     * Generate schema from trie.
-     */
-    public void generateSchema() {
-
-        Stack<JsonComplex> stack = new Stack<>();
-        stack.push(root);
-
-        while (!stack.empty()) {
-            JsonComplex currentRoot = stack.pop();
-            currentRoot.getTable();
-            /*
-            TODO: тут надо хронить пару: указатель на отца и его сына, устанавливать указатели на соответствующие объекты.
-            Как в методе init()
-             */
-        }
-
-
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tree tree = (Tree) o;
+        return Objects.equals(root, tree.root);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(root);
+    }
 
     @Override
     public String toString() {

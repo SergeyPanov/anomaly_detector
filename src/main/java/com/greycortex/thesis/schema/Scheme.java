@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * Schema is a list of tables.
  */
-public class Schema {
+public class Scheme {
     private ArrayList<ERDTable> tables = new ArrayList<>();
 
     public ArrayList<ERDTable> getTables() {

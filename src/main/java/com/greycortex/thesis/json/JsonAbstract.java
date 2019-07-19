@@ -4,6 +4,7 @@ import com.greycortex.thesis.schema.ERDTable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public abstract class JsonAbstract {
@@ -15,6 +16,14 @@ public abstract class JsonAbstract {
     public JsonAbstract(String name, Set<Type> type) {
         this.name = name;
         this.type = type;
+    }
+
+    public boolean isObject() {
+        return getType().size() == 1 && getType().iterator().next() == Type.OBJECT;
+    }
+
+    public boolean isArray() {
+        return getType().size() == 1 && getType().iterator().next() == Type.ARRAY;
     }
 
     public JsonAbstract(String name){
@@ -37,5 +46,17 @@ public abstract class JsonAbstract {
         return type;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JsonAbstract that = (JsonAbstract) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(type, that.type);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type);
+    }
 }

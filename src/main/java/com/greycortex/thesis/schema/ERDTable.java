@@ -3,8 +3,6 @@ package com.greycortex.thesis.schema;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Single table from the
@@ -14,15 +12,15 @@ public class ERDTable {
 
     private HashMap<String, String> columns;
 
-    private List<ERDTable> oneToOne;
+    private ArrayList<ERDTable> oneToOne;
 
-    private List<ERDTable> oneToMany;
+    private ArrayList<ERDTable> manyToOne;
 
     public ERDTable(String name, HashMap<String, String> columns) {
         this.name = name;
         this.columns = columns;
         this.oneToOne = new ArrayList<>();
-        this.oneToMany = new ArrayList<>();
+        this.manyToOne = new ArrayList<>();
     }
 
 
@@ -51,19 +49,19 @@ public class ERDTable {
         columns.put(name, type);
     }
 
-    public List<ERDTable> getOneToOne() {
+    public ArrayList<ERDTable> getOneToOne() {
         return oneToOne;
     }
 
-    public void setOneToOne(List<ERDTable> oneToOne) {
-        this.oneToOne = oneToOne;
+    public ArrayList<ERDTable> getManyToOne() {
+        return manyToOne;
     }
 
-    public List<ERDTable> getOneToMany() {
-        return oneToMany;
+    public void addOneToOne(ERDTable oneToOne) {
+        this.oneToOne.add(oneToOne);
     }
 
-    public void setOneToMany(List<ERDTable> oneToMany) {
-        this.oneToMany = oneToMany;
+    public void addManyToOne(ERDTable oneToOne) {
+        this.manyToOne.add(oneToOne);
     }
 }

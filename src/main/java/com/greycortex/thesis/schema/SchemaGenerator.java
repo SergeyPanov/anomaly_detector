@@ -9,21 +9,41 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 /**
- * Takes {@link com.greycortex.thesis.trie.Tree} and generate the {@link Scheme} from the tree.
+ * Takes {@link com.greycortex.thesis.trie.Tree} and generate the {@link Schema} from the tree.
  */
-public abstract class SchemaGenerator {
+public class SchemaGenerator {
 
-    public static Scheme generateScheme(Tree tree) {
+    private Stack<Pair<ERDTable, Node>> fstStack = new Stack<>();
 
-        Stack<Pair<ERDTable, Node>> fstStack = new Stack<>();
-        Stack<Pair<ERDTable, Node>> sndStack = new Stack<>();
+    private Stack<ERDTable> schemaStack = new Stack<>();
 
+
+    /**
+     * If "tbl" is not in the "stack" -> push it
+     * else find this table in the stack and insert into found table all relations from the "tbl"
+     *
+     * @param stack where to insert
+     * @param tbl   what to insert
+     */
+    private void pushOrUpdate(Stack<ERDTable> stack, ERDTable tbl) {
+
+        if (stack.stream().noneMatch(el -> el.equals(tbl))) {
+            stack.push(tbl);
+        } else {
+            ERDTable found = stack.stream().filter(el -> el.equals(tbl)).findFirst().orElse(tbl);
+            found.addAllWithoutDuplicatesOneToOne(tbl.getOneToOne());
+            found.addAllWithoutDuplicatesManyToOne(tbl.getManyToOne());
+            found.setName(found.getName() + "_" + tbl.getName());
+        }
+
+    }
+
+
+    public Schema generateScheme(Tree tree) {
+        fstStack = new Stack<>();
         fstStack.push(new MutablePair<>(new ERDTable(null), tree.getRoot()));
-
         while (!fstStack.isEmpty()) {
-
             Pair<ERDTable, Node> currentRoot = fstStack.pop();
-            sndStack.push(currentRoot);
 
             ERDTable nodeTable = currentRoot.getKey();
             Node root = currentRoot.getValue();
@@ -38,37 +58,44 @@ public abstract class SchemaGenerator {
                 } else {
                     if (child.isArray()) {
                         child.getChildren().forEach(elems -> {
+
                             if (elems.isObject()) {
+                                // Array of objects [OBJECT]
                                 ERDTable manyToOneTbl = new ERDTable(elems.getName());
                                 manyToOneTbl.addManyToOne(nodeTable);
                                 fstStack.push(new MutablePair<>(manyToOneTbl, elems));
                             } else {
                                 // Mixed Array, contains only simple types and objects !! DOES NOT CONSIDER INNER ARRAYS !!
-                                for (Node el:
-                                        elems.getChildren()) {
-                                    if (!el.isComplex()) {
-                                        nodeTable.setColumn(el.getName() + "_" + el.getType().iterator().next().getValue(), el.getType().iterator().next().getValue());
-                                    } else {
-                                        // Many-To-Many
-                                        ERDTable manyToOneTbl = new ERDTable(el.getName());
-                                        manyToOneTbl.addManyToOne(nodeTable);
-                                        fstStack.push(new MutablePair<>(manyToOneTbl, el));
+                                if (elems.isMixed()) {
+                                    // Mixed has the type [STRING, INTEGER, OBJECT...]
+                                    for (Node el :
+                                            elems.getChildren()) {
+                                        if (!el.isComplex()) {
+                                            nodeTable.setColumn(el.getName() + "_" + el.getType().iterator().next().getValue(), el.getType().iterator().next().getValue());
+                                        } else {
+                                            // Many-To-Many
+                                            ERDTable manyToOneTbl = new ERDTable(el.getName());
+                                            manyToOneTbl.addManyToOne(nodeTable);
+                                            fstStack.push(new MutablePair<>(manyToOneTbl, el));
+                                        }
                                     }
+                                } else {
+                                    // Just simple type [STRING | INTEGER...]
+                                    nodeTable.setColumn(elems.getName(), elems.getType().iterator().next().getValue());
                                 }
                             }
                         });
                     }
-
                     if (child.isObject()) {
                         // One-To-One relation
-                        ERDTable oneToOneTbl = new ERDTable(child.getName());
-                        nodeTable.addOneToOne(oneToOneTbl);
+                        ERDTable oneToOneTbl = new ERDTable(root.getName() + "_" + child.getName());
+                        oneToOneTbl.addOneToOne(nodeTable);
                         fstStack.push(new MutablePair<>(oneToOneTbl, child));
-                        nodeTable.setColumn(child.getName(), child.getType().iterator().next().getValue());
                     }
                 }
             }
+            pushOrUpdate(schemaStack, currentRoot.getKey());
         }
-        return null;
+        return new Schema(schemaStack);
     }
 }

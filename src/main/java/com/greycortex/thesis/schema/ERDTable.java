@@ -3,6 +3,7 @@ package com.greycortex.thesis.schema;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Single table from the
@@ -57,11 +58,45 @@ public class ERDTable {
         return manyToOne;
     }
 
+
+    private ArrayList<ERDTable> addAllWithoutDuplicates(ArrayList<ERDTable> where, ArrayList<ERDTable> what) {
+        for (ERDTable tbl :
+                what) {
+            if (!where.contains(tbl)) {
+                where.add(tbl);
+            }
+        }
+        return where;
+    }
+
     public void addOneToOne(ERDTable oneToOne) {
         this.oneToOne.add(oneToOne);
+    }
+
+    public void addAllWithoutDuplicatesOneToOne(ArrayList<ERDTable> tables) {
+        addAllWithoutDuplicates(this.oneToOne, tables);
     }
 
     public void addManyToOne(ERDTable oneToOne) {
         this.manyToOne.add(oneToOne);
     }
+
+    public void addAllWithoutDuplicatesManyToOne(ArrayList<ERDTable> tables) {
+        addAllWithoutDuplicates(this.manyToOne, tables);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ERDTable table = (ERDTable) o;
+        return Objects.equals(columns, table.columns);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(columns);
+    }
+
+
 }

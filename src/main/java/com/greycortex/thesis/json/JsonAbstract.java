@@ -1,8 +1,5 @@
 package com.greycortex.thesis.json;
 
-import com.greycortex.thesis.schema.ERDTable;
-
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -26,7 +23,7 @@ public abstract class JsonAbstract {
         return getType().size() == 1 && getType().iterator().next() == Type.ARRAY;
     }
 
-    public JsonAbstract(String name){
+    public JsonAbstract(String name) {
         this(name, new HashSet<>());
     }
 
@@ -44,6 +41,10 @@ public abstract class JsonAbstract {
 
     public Set<Type> getType() {
         return type;
+    }
+
+    public boolean isMixed() {
+        return type.size() > 1;
     }
 
     @Override

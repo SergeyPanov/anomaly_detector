@@ -57,9 +57,14 @@ public class Node {
         return element.isObject();
     }
 
+    public boolean isMixed() {
+        return element.isMixed();
+    }
+
     public boolean isArray() {
         return element.isArray();
     }
+
     /**
      * @return True if the node is complex(ARRAY or OBJECT)
      */

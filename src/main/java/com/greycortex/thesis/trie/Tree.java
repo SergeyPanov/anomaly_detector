@@ -1,7 +1,6 @@
 package com.greycortex.thesis.trie;
 
 import com.greycortex.thesis.json.*;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.simple.JSONObject;
@@ -14,7 +13,7 @@ public class Tree {
     private Node root;
 
     public Tree(JsonWrapper object) {
-        this.object = object;;
+        this.object = object;
         root = new Node(new JsonComplex());
         init();
     }
@@ -48,7 +47,7 @@ public class Tree {
     private void init() {
 
         JsonWrapper properties = object.getWrapped(SchemaKeys.PROPERTIES);
-        if (properties == null) { ;
+        if (properties == null) {
             root = null;
             return;
         }
@@ -110,7 +109,7 @@ public class Tree {
                                 auxNode = new Node(new JsonComplex(name, value.getType()));
                                 currentRoot.add(0, auxNode);
                                 nextInput = new Stack<>();
-                                Map.Entry<String, JSONObject> entry = new AbstractMap.SimpleEntry<>( name + "_" + SchemaKeys.ITEMS, value.getWrapped(SchemaKeys.ITEMS).getObject());
+                                Map.Entry<String, JSONObject> entry = new AbstractMap.SimpleEntry<>(name + "_" + SchemaKeys.ITEMS, value.getWrapped(SchemaKeys.ITEMS).getObject());
                                 nextInput.add(entry);
                                 trieConstructStack.push(new MutablePair<>(auxNode, nextInput));
                                 break;

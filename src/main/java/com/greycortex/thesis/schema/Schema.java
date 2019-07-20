@@ -1,5 +1,7 @@
 package com.greycortex.thesis.schema;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -10,5 +12,29 @@ public class Schema {
 
     public Schema(Stack<ERDTable> tables) {
         this.tables = tables;
+    }
+
+
+    /**
+     * TODO: Rename this.
+     *
+     * @return list of queries for schema creation
+     */
+    public ArrayList<String> getAll() {
+        ArrayList<String> queries = new ArrayList<>();
+        while (!tables.empty()) {
+
+            ERDTable top = tables.pop();
+
+            ArrayList<String> fields = new ArrayList<>();
+
+            for (Map.Entry entry :
+                    top.getColumns().entrySet()) {
+                fields.add((String) entry.getKey());
+                fields.add((String) entry.getValue());
+            }
+            queries.add(DBTemplates.createTable(top.getName(), fields));
+        }
+        return queries;
     }
 }

@@ -5,6 +5,7 @@ import com.greycortex.thesis.json.JsonComplex;
 import com.greycortex.thesis.json.Type;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -32,6 +33,12 @@ public class Node {
     public void add(Node el) {
         if (element instanceof JsonComplex) {
             ((JsonComplex) element).add(el.getElement());
+        }
+    }
+
+    public void addAll(List<Node> nds) {
+        if (element instanceof JsonComplex) {
+            ((JsonComplex) element).
         }
     }
 

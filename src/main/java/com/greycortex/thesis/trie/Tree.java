@@ -14,7 +14,7 @@ public class Tree {
 
     public Tree(JsonWrapper object) {
         this.object = object;
-        root = new Node(new JsonComplex());
+        root = new Node(new JsonComplex("root", null));
         init();
     }
 
@@ -109,7 +109,7 @@ public class Tree {
                                 auxNode = new Node(new JsonComplex(name, value.getType()));
                                 currentRoot.add(0, auxNode);
                                 nextInput = new Stack<>();
-                                Map.Entry<String, JSONObject> entry = new AbstractMap.SimpleEntry<>(name + "_" + SchemaKeys.ITEMS, value.getWrapped(SchemaKeys.ITEMS).getObject());
+                                Map.Entry<String, JSONObject> entry = new AbstractMap.SimpleEntry<>(name, value.getWrapped(SchemaKeys.ITEMS).getObject());
                                 nextInput.add(entry);
                                 trieConstructStack.push(new MutablePair<>(auxNode, nextInput));
                                 break;

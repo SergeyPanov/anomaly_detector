@@ -15,21 +15,28 @@ import java.util.stream.Collectors;
  */
 public class SchemaGenerator {
 
+    private static final String ARRAY_QUANTIFIER = "[]";
+
     private Stack<Pair<ERDTable, Node>> fstStack = new Stack<>();
 
     private Stack<ERDTable> schemaStack = new Stack<>();
 
-
-//    private void pushToStack(Stack<Pair<ERDTable, Node>> whereTo, )
-
     public Schema generateScheme(Tree tree) {
+
+        Stack<String> path = new Stack<>();
+
         fstStack = new Stack<>();
-        fstStack.push(new MutablePair<>(new ERDTable("root"), tree.getRoot()));
+        fstStack.push(new MutablePair<>(new ERDTable(tree.getRoot().getName()), tree.getRoot()));
+        path.push(tree.getRoot().getName());
+
         while (!fstStack.isEmpty()) {
             Pair<ERDTable, Node> currentRoot = fstStack.pop();
+            path.pop();
 
             ERDTable rootTable = currentRoot.getKey();
             Node root = currentRoot.getValue();
+
+            rootTable.addBashPath(new ArrayList<>(path));
 
             ArrayList<Node> children = root.getChildren();
 
@@ -37,7 +44,8 @@ public class SchemaGenerator {
                     children) {
                 if (!child.isComplex()) {
                     // Simple value(STRING, NUMBER ...)
-                    rootTable.setColumn(child.getName(), DBTypes.getEnum(child.getType().iterator().next().getValue()).toString());
+                    rootTable.setColumn(child.getName(),
+                            DBTypes.getEnum(child.getType().iterator().next().getValue()).toString());
                 } else {
                     if (child.isArray()) {
                         child.getChildren().forEach(elems -> {
@@ -48,6 +56,7 @@ public class SchemaGenerator {
                                 manyToOneTbl.addManyToOne(rootTable);
                                 rootTable.addOneToMany(manyToOneTbl);
                                 fstStack.push(new MutablePair<>(manyToOneTbl, elems));
+                                path.push(elems.getName());
                             } else {
                                 // Mixed Array, contains only simple types and objects !! DOES NOT CONSIDER INNER ARRAYS !!
                                 if (elems.isMixed()) {
@@ -55,28 +64,32 @@ public class SchemaGenerator {
                                     for (Node el :
                                             elems.getChildren()) {
                                         if (!el.isComplex()) {
-                                            rootTable.setColumn(el.getName() + "_" + el.getType().iterator().next().getValue(), DBTypes.getEnum(el.getType().iterator().next().getValue()).toString());
+                                            rootTable.setColumn(el.getName() + "_" + el.getType().iterator().next().getValue(),
+                                                    DBTypes.getEnum(el.getType().iterator().next().getValue()).toString() + ARRAY_QUANTIFIER );
                                         } else {
                                             // Many-To-Many
                                             ERDTable manyToOneTbl = new ERDTable(el.getName());
                                             manyToOneTbl.addManyToOne(rootTable);
                                             rootTable.addOneToMany(manyToOneTbl);
                                             fstStack.push(new MutablePair<>(manyToOneTbl, el));
+                                            path.push(el.getName());
                                         }
                                     }
                                 } else {
                                     // Just simple type [STRING | INTEGER...]
-                                    rootTable.setColumn(elems.getName(), DBTypes.getEnum(elems.getType().iterator().next().getValue()).toString());
+                                    rootTable.setColumn(elems.getName(),
+                                            DBTypes.getEnum(elems.getType().iterator().next().getValue()).toString() + ARRAY_QUANTIFIER);
                                 }
                             }
                         });
                     }
                     if (child.isObject()) {
                         // One-To-One relation
-                        ERDTable oneToOneTbl = new ERDTable(child.getName());
+                        ERDTable oneToOneTbl = new ERDTable(root.getName() + "_" + child.getName());
                         oneToOneTbl.addOneToOne(rootTable);
                         rootTable.addOneToOne(oneToOneTbl);
                         fstStack.push(new MutablePair<>(oneToOneTbl, child));
+                        path.push(child.getName());
                     }
                 }
             }
@@ -86,7 +99,11 @@ public class SchemaGenerator {
         return new Schema(schemaStack);
     }
 
-
+    /**
+     * Merge the same tables into one.
+     *
+     * @param tables
+     */
     private void mergeTables(Stack<ERDTable> tables) {
 
         List<ERDTable> forRemove = new ArrayList<>();
@@ -115,15 +132,12 @@ public class SchemaGenerator {
                     }
                 }
             }
-
         }
-
-
         for (ERDTable t :
                 forRemove) {
             tables.removeIf(el -> el.getName().equals(t.getName()));
         }
-
+        return;
     }
 
 }

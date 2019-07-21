@@ -36,7 +36,6 @@ public class Node {
         }
     }
 
-
     public ArrayList<Node> getChildren() {
         ArrayList<Node> children = new ArrayList<>();
 

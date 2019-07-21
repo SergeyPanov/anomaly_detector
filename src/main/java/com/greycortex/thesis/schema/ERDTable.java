@@ -9,6 +9,8 @@ import java.util.*;
 public class ERDTable {
     private String name;
 
+    private List<List<String>> basePaths = new ArrayList<>();
+
     private HashMap<String, String> columns;
 
     private List<ERDTable> oneToOne;
@@ -26,6 +28,9 @@ public class ERDTable {
         this.oneToMany = new ArrayList<>();
     }
 
+    public void addBashPath(List<String> path) {
+        basePaths.add(path);
+    }
 
     public ERDTable(String name) {
         this(name, new HashMap<>());
@@ -80,7 +85,6 @@ public class ERDTable {
     public void addManyToOne(ERDTable tb) {
         this.manyToOne.add(tb);
     }
-
     public void addManyToOne(List<ERDTable> tbls) {
         addAllUnique(manyToOne, tbls);
     }

@@ -661,4 +661,75 @@ public class SchemaGeneratorTest {
 
         (new SchemaGenerator()).generateScheme(tree);
     }
+
+    @Test
+    public void generateScheme6Test() throws ParseException {
+        JSONParser parser = new JSONParser();
+        JSONObject object = (JSONObject) parser.parse(
+                "{\n" +
+                        "  \"type\" : \"object\",\n" +
+                        "  \"properties\" : {\n" +
+                        "    \"id\" : {\n" +
+                        "      \"type\" : \"integer\",\n" +
+                        "      \"maximum\" : 32767,\n" +
+                        "      \"minimum\" : 0\n" +
+                        "    },\n" +
+                        "    \"arr\" : {\n" +
+                        "      \"type\" : \"array\",\n" +
+                        "      \"items\" : {\n" +
+                        "        \"type\" : \"object\",\n" +
+                        "        \"properties\" : {\n" +
+                        "          \"id\" : {\n" +
+                        "            \"type\" : \"integer\",\n" +
+                        "            \"maximum\" : 32767,\n" +
+                        "            \"minimum\" : 0\n" +
+                        "          }\n" +
+                        "        },\n" +
+                        "        \"additionalProperties\" : false\n" +
+                        "      }\n" +
+                        "    },\n" +
+                        "    \"ob\" : {\n" +
+                        "      \"type\" : \"object\",\n" +
+                        "      \"properties\" : {\n" +
+                        "        \"id\" : {\n" +
+                        "          \"type\" : \"integer\",\n" +
+                        "          \"maximum\" : 32767,\n" +
+                        "          \"minimum\" : 0\n" +
+                        "        }\n" +
+                        "      },\n" +
+                        "      \"additionalProperties\" : false\n" +
+                        "    },\n" +
+                        "    \"obOb\" : {\n" +
+                        "      \"type\" : \"object\",\n" +
+                        "      \"properties\" : {\n" +
+                        "        \"id\" : {\n" +
+                        "          \"type\" : \"integer\",\n" +
+                        "          \"maximum\" : 32767,\n" +
+                        "          \"minimum\" : 0\n" +
+                        "        },\n" +
+                        "        \"oob\" : {\n" +
+                        "          \"type\" : \"object\",\n" +
+                        "          \"properties\" : {\n" +
+                        "            \"id\" : {\n" +
+                        "              \"type\" : \"integer\",\n" +
+                        "              \"maximum\" : 32767,\n" +
+                        "              \"minimum\" : 0\n" +
+                        "            }\n" +
+                        "          },\n" +
+                        "          \"additionalProperties\" : false\n" +
+                        "        }\n" +
+                        "      },\n" +
+                        "      \"additionalProperties\" : false\n" +
+                        "    }\n" +
+                        "  },\n" +
+                        "  \"additionalProperties\" : false\n" +
+                        "}\n" +
+                        "\n"
+        );
+
+        Tree tree = new Tree(new JsonWrapper(object));
+
+        (new SchemaGenerator()).generateScheme(tree);
+    }
+
 }

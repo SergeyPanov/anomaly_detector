@@ -2,7 +2,6 @@ package com.greycortex.thesis.schema;
 
 import com.greycortex.thesis.trie.Node;
 import com.greycortex.thesis.trie.Tree;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -18,38 +17,16 @@ public class SchemaGenerator {
 
     private Stack<Pair<ERDTable, Node>> fstStack = new Stack<>();
 
-    private List<Pair<ERDTable, Node>> tbls = new ArrayList<>();
-
     private Stack<ERDTable> schemaStack = new Stack<>();
 
 
-    /**
-     * If "tbl" is not in the "stack" -> push it
-     * else find this table in the stack and insert into found table all relations from the "tbl"
-     *
-     * @param stack where to insert
-     * @param tbl   what to insert
-     */
-    private void pushOrUpdate(Stack<ERDTable> stack, ERDTable tbl) {
-
-        if (stack.stream().noneMatch(el -> el.equals(tbl))) {
-            stack.push(tbl);
-        } else {
-            ERDTable found = stack.stream().filter(el -> el.equals(tbl)).findFirst().orElse(tbl);
-            found.addAllWithoutDuplicatesOneToOne(tbl.getOneToOne());
-            found.addAllWithoutDuplicatesManyToOne(tbl.getManyToOne());
-            found.setName(found.getName() + "_" + tbl.getName());
-        }
-    }
-
+//    private void pushToStack(Stack<Pair<ERDTable, Node>> whereTo, )
 
     public Schema generateScheme(Tree tree) {
         fstStack = new Stack<>();
         fstStack.push(new MutablePair<>(new ERDTable("root"), tree.getRoot()));
         while (!fstStack.isEmpty()) {
             Pair<ERDTable, Node> currentRoot = fstStack.pop();
-
-            tbls.add(currentRoot);
 
             ERDTable rootTable = currentRoot.getKey();
             Node root = currentRoot.getValue();
@@ -69,6 +46,7 @@ public class SchemaGenerator {
                                 // Array of objects [OBJECT]
                                 ERDTable manyToOneTbl = new ERDTable(elems.getName());
                                 manyToOneTbl.addManyToOne(rootTable);
+                                rootTable.addOneToMany(manyToOneTbl);
                                 fstStack.push(new MutablePair<>(manyToOneTbl, elems));
                             } else {
                                 // Mixed Array, contains only simple types and objects !! DOES NOT CONSIDER INNER ARRAYS !!
@@ -82,6 +60,7 @@ public class SchemaGenerator {
                                             // Many-To-Many
                                             ERDTable manyToOneTbl = new ERDTable(el.getName());
                                             manyToOneTbl.addManyToOne(rootTable);
+                                            rootTable.addOneToMany(manyToOneTbl);
                                             fstStack.push(new MutablePair<>(manyToOneTbl, el));
                                         }
                                     }
@@ -94,17 +73,57 @@ public class SchemaGenerator {
                     }
                     if (child.isObject()) {
                         // One-To-One relation
-                        ERDTable oneToOneTbl = new ERDTable(root.getName() + "_" + child.getName());
+                        ERDTable oneToOneTbl = new ERDTable(child.getName());
                         oneToOneTbl.addOneToOne(rootTable);
+                        rootTable.addOneToOne(oneToOneTbl);
                         fstStack.push(new MutablePair<>(oneToOneTbl, child));
                     }
                 }
             }
-//            pushOrUpdate(schemaStack, currentRoot.getKey());
             schemaStack.push(currentRoot.getKey());
         }
-
+        mergeTables(schemaStack);
         return new Schema(schemaStack);
+    }
+
+
+    private void mergeTables(Stack<ERDTable> tables) {
+
+        List<ERDTable> forRemove = new ArrayList<>();
+
+        for (ERDTable tbl :
+                tables) {
+
+            List<ERDTable> clones = tables.stream().filter(cl -> cl.equals(tbl)).collect(Collectors.toList());
+
+            if (!forRemove.contains(tbl)) {
+
+                for (ERDTable clone :
+                        clones) {
+
+                    if (clone != tbl) {
+                        tbl.addOneToOne(clone.getOneToOne());
+                        tbl.addOneToMany(clone.getOneToMany());
+                        tbl.addManyToOne(clone.getManyToOne());
+                        tbl.setName(tbl.getName() + "_" + clone.getName());
+
+                        clone.getOneToOne().forEach(tl -> tl.replaceTable(clone, tbl));
+                        clone.getOneToMany().forEach(tl -> tl.replaceTable(clone, tbl));
+                        clone.getManyToOne().forEach(tl -> tl.replaceTable(clone, tbl));
+
+                        forRemove.add(clone);
+                    }
+                }
+            }
+
+        }
+
+
+        for (ERDTable t :
+                forRemove) {
+            tables.removeIf(el -> el.getName().equals(t.getName()));
+        }
+
     }
 
 }

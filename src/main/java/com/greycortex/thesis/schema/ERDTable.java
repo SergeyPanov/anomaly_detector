@@ -1,9 +1,7 @@
 package com.greycortex.thesis.schema;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Single table from the
@@ -13,15 +11,19 @@ public class ERDTable {
 
     private HashMap<String, String> columns;
 
-    private ArrayList<ERDTable> oneToOne;
+    private List<ERDTable> oneToOne;
 
-    private ArrayList<ERDTable> manyToOne;
+    private List<ERDTable> manyToOne;
+
+    private List<ERDTable> oneToMany;
+
 
     public ERDTable(String name, HashMap<String, String> columns) {
         this.name = name;
         this.columns = columns;
         this.oneToOne = new ArrayList<>();
         this.manyToOne = new ArrayList<>();
+        this.oneToMany = new ArrayList<>();
     }
 
 
@@ -32,11 +34,6 @@ public class ERDTable {
     public HashMap<String, String> getColumns() {
         return columns;
     }
-
-    public void setColumns(HashMap<String, String> columns) {
-        this.columns = columns;
-    }
-
 
     public String getName() {
         return name;
@@ -50,39 +47,71 @@ public class ERDTable {
         columns.put(name, type);
     }
 
-    public ArrayList<ERDTable> getOneToOne() {
+    public List<ERDTable> getOneToOne() {
         return oneToOne;
     }
 
-    public ArrayList<ERDTable> getManyToOne() {
+    public List<ERDTable> getManyToOne() {
         return manyToOne;
     }
 
+    public List<ERDTable> getOneToMany() {
+        return oneToMany;
+    }
 
-    private ArrayList<ERDTable> addAllWithoutDuplicates(ArrayList<ERDTable> where, ArrayList<ERDTable> what) {
-        for (ERDTable tbl :
+
+    private void addAllUnique(List<ERDTable> where, List<ERDTable> what) {
+        for (ERDTable tb :
                 what) {
-            if (!where.contains(tbl)) {
-                where.add(tbl);
+            if (where.stream().noneMatch(el -> el.equals(tb) && el.getName().equals(tb.getName()))) {
+                where.add(tb);
             }
         }
-        return where;
     }
 
-    public void addOneToOne(ERDTable oneToOne) {
-        this.oneToOne.add(oneToOne);
+    public void addOneToOne(ERDTable tb) {
+        this.oneToOne.add(tb);
     }
 
-    public void addAllWithoutDuplicatesOneToOne(ArrayList<ERDTable> tables) {
-        addAllWithoutDuplicates(this.oneToOne, tables);
+    public void addOneToOne(List<ERDTable> tbls) {
+        addAllUnique(oneToOne, tbls);
     }
 
-    public void addManyToOne(ERDTable oneToOne) {
-        this.manyToOne.add(oneToOne);
+    public void addManyToOne(ERDTable tb) {
+        this.manyToOne.add(tb);
     }
 
-    public void addAllWithoutDuplicatesManyToOne(ArrayList<ERDTable> tables) {
-        addAllWithoutDuplicates(this.manyToOne, tables);
+    public void addManyToOne(List<ERDTable> tbls) {
+        addAllUnique(manyToOne, tbls);
+    }
+
+    public void addOneToMany(ERDTable tb) {
+        this.oneToMany.add(tb);
+    }
+
+    public void addOneToMany(List<ERDTable> tbls) {
+        addAllUnique(oneToMany, tbls);
+    }
+
+
+    /**
+     * Instead of fst set snd
+     *
+     * @param fst
+     * @param snd
+     */
+    public void replaceTable(ERDTable fst, ERDTable snd) {
+
+        if (oneToOne.removeIf(el -> el == fst))
+            addAllUnique(oneToOne, Collections.singletonList(snd));
+
+
+        if (oneToMany.removeIf(el -> el == fst))
+            addAllUnique(oneToMany, Collections.singletonList(snd));
+
+
+        if (manyToOne.removeIf(el -> el == fst))
+            addAllUnique(manyToOne, Collections.singletonList(snd));
     }
 
     @Override

@@ -36,11 +36,6 @@ public class Node {
         }
     }
 
-    public void addAll(List<Node> nds) {
-        if (element instanceof JsonComplex) {
-            ((JsonComplex) element).
-        }
-    }
 
     public ArrayList<Node> getChildren() {
         ArrayList<Node> children = new ArrayList<>();

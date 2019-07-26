@@ -14,7 +14,7 @@ public class Tree {
 
     public Tree(JsonWrapper object) {
         this.object = object;
-        root = new Node(new JsonComplex());
+        root = new Node(new JsonComplex("root", null));
         init();
     }
 

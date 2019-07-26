@@ -5,7 +5,10 @@ import com.greycortex.thesis.trie.Tree;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import java.util.stream.Collectors;
 
 /**
  * Takes {@link com.greycortex.thesis.trie.Tree} and generate the {@link Schema} from the tree.
@@ -14,6 +17,8 @@ public class SchemaGenerator {
 
 
 
+
+    private static final String ARRAY_QUANTIFIER = "[]";
 
     private Stack<Pair<ERDTable, Node>> fstStack = new Stack<>();
 
@@ -76,6 +81,8 @@ public class SchemaGenerator {
                                             rootTable.setColumn(el.getName() + "_" + el.getType().iterator().next().getValue(),
                                                     DBTypes.getEnum(el.getType().iterator().next().getValue()).toString());
 
+                                            rootTable.setColumn(el.getName() + "_" + el.getType().iterator().next().getValue(),
+                                                    DBTypes.getEnum(el.getType().iterator().next().getValue()).toString() + ARRAY_QUANTIFIER );
                                         } else {
                                             // Many-To-Many
                                             path.add(child.getName());
@@ -91,7 +98,8 @@ public class SchemaGenerator {
                                     }
                                 } else {
                                     // Just simple type [STRING | INTEGER...]
-                                    rootTable.setColumn(elems.getName(), DBTypes.getEnum(elems.getType().iterator().next().getValue()).toString());
+                                    rootTable.setColumn(elems.getName(),
+                                            DBTypes.getEnum(elems.getType().iterator().next().getValue()).toString() + ARRAY_QUANTIFIER);
                                 }
                             }
                         });

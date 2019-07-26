@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -19,17 +20,24 @@ public class SchemaGenerator {
 
     private Stack<ERDTable> schemaStack = new Stack<>();
 
-
-//    private void pushToStack(Stack<Pair<ERDTable, Node>> whereTo, )
-
+    /**
+     * Iterative post order traverse
+     * @param tree
+     * @return
+     */
     public Schema generateScheme(Tree tree) {
         fstStack = new Stack<>();
         fstStack.push(new MutablePair<>(new ERDTable("root"), tree.getRoot()));
+
+        List<String> path = new ArrayList<>();
+
         while (!fstStack.isEmpty()) {
             Pair<ERDTable, Node> currentRoot = fstStack.pop();
 
             ERDTable rootTable = currentRoot.getKey();
             Node root = currentRoot.getValue();
+
+            path.add(root.getName());
 
             ArrayList<Node> children = root.getChildren();
 
@@ -44,10 +52,16 @@ public class SchemaGenerator {
 
                             if (elems.isObject()) {
                                 // Array of objects [OBJECT]
+                                path.add(child.getName());
+
                                 ERDTable manyToOneTbl = new ERDTable(elems.getName());
                                 manyToOneTbl.addManyToOne(rootTable);
                                 rootTable.addOneToMany(manyToOneTbl);
                                 fstStack.push(new MutablePair<>(manyToOneTbl, elems));
+
+                                manyToOneTbl.addPath(new ArrayList<>(path));
+                                path.remove(path.size() - 1);
+
                             } else {
                                 // Mixed Array, contains only simple types and objects !! DOES NOT CONSIDER INNER ARRAYS !!
                                 if (elems.isMixed()) {
@@ -58,10 +72,15 @@ public class SchemaGenerator {
                                             rootTable.setColumn(el.getName() + "_" + el.getType().iterator().next().getValue(), DBTypes.getEnum(el.getType().iterator().next().getValue()).toString());
                                         } else {
                                             // Many-To-Many
+                                            path.add(child.getName());
+
                                             ERDTable manyToOneTbl = new ERDTable(el.getName());
                                             manyToOneTbl.addManyToOne(rootTable);
                                             rootTable.addOneToMany(manyToOneTbl);
                                             fstStack.push(new MutablePair<>(manyToOneTbl, el));
+
+                                            manyToOneTbl.addPath(new ArrayList<>(path));
+                                            path.remove(path.size() - 1);
                                         }
                                     }
                                 } else {
@@ -73,20 +92,32 @@ public class SchemaGenerator {
                     }
                     if (child.isObject()) {
                         // One-To-One relation
+                        path.add(child.getName());
+
                         ERDTable oneToOneTbl = new ERDTable(child.getName());
                         oneToOneTbl.addOneToOne(rootTable);
                         rootTable.addOneToOne(oneToOneTbl);
                         fstStack.push(new MutablePair<>(oneToOneTbl, child));
+
+                        oneToOneTbl.addPath(new ArrayList<>(path));
+                        path.remove(path.size() - 1);
+
                     }
                 }
             }
-            schemaStack.push(currentRoot.getKey());
+            schemaStack.push(rootTable);
         }
-        mergeTables(schemaStack);
+//        mergeTables(schemaStack);
         return new Schema(schemaStack);
     }
 
 
+    /**
+     * TODO: merge paths
+     * Merge the same tables.
+     * Tables are the same if have the same column with the same types.
+     * @param tables
+     */
     private void mergeTables(Stack<ERDTable> tables) {
 
         List<ERDTable> forRemove = new ArrayList<>();

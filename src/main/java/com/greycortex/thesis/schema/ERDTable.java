@@ -9,6 +9,8 @@ import java.util.*;
 public class ERDTable {
     private String name;
 
+    private List<List<String>> paths;
+
     private HashMap<String, String> columns;
 
     private List<ERDTable> oneToOne;
@@ -24,6 +26,7 @@ public class ERDTable {
         this.oneToOne = new ArrayList<>();
         this.manyToOne = new ArrayList<>();
         this.oneToMany = new ArrayList<>();
+        this.paths = new Stack<>();
     }
 
 
@@ -59,6 +62,9 @@ public class ERDTable {
         return oneToMany;
     }
 
+    public void addPath(List<String> pth) {
+        paths.add(pth);
+    }
 
     private void addAllUnique(List<ERDTable> where, List<ERDTable> what) {
         for (ERDTable tb :

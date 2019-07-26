@@ -12,6 +12,9 @@ import java.util.*;
  */
 public class SchemaGenerator {
 
+
+
+
     private Stack<Pair<ERDTable, Node>> fstStack = new Stack<>();
 
     private List<ERDTable> schema = new ArrayList<>();
@@ -215,7 +218,6 @@ public class SchemaGenerator {
             otm.getOneToOne().remove(snd);
             otm.addUniqueOneToOne(fst);
         }
-
     }
 
     /**

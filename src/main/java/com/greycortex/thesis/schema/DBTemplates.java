@@ -15,7 +15,7 @@ public abstract class DBTemplates {
                     "%s\n" +
                     ");";
 
-    public static String createTable(String name, ArrayList<String > args) {
+    public static String createTable(String tableName, ArrayList<String > args) {
         StringBuilder fields = new StringBuilder();
         String delimiter = ",\n";
         for (int i = 0; i < args.size(); i += 2) {
@@ -27,7 +27,7 @@ public abstract class DBTemplates {
                     .append(delimiter);
         }
         fields.delete(fields.length() - delimiter.length(), fields.length());
-        return String.format(NEW_TABLE, name, fields);
+        return String.format(NEW_TABLE, tableName, fields);
     }
 
 }

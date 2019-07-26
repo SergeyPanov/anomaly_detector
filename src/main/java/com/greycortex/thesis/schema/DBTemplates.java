@@ -9,6 +9,9 @@ import java.util.List;
  */
 public abstract class DBTemplates {
 
+    public final static String FK_PREFIX = "_FK";
+    public final static String PK = "_PK";
+
     private final static String TAB = "\t";
 
     private final static String NEW_TABLE =
@@ -17,13 +20,12 @@ public abstract class DBTemplates {
                     "%s\n" +
                     ");";
 
-    private final static String PK_CONSTRAINT = "ALTER TABLE %s ADD PRIMARY KEY (%s);";
+    private final static String FK_CONSTRAINT = "ALTER TABLE %s ADD CONSTRAINT %s_fk FOREIGN KEY (%s) REFERENCES %s (%s);";
 
 
     public static String createTable(String tableName, ArrayList<String > args) {
         StringBuilder fields = new StringBuilder();
         String delimiter = ",\n";
-        args.addAll(Arrays.asList("_ID", "INTEGER"));
         for (int i = 0; i < args.size(); i += 2) {
             fields
                     .append(TAB)
@@ -36,18 +38,19 @@ public abstract class DBTemplates {
         return String.format(NEW_TABLE, tableName, fields);
     }
 
-    public static String createPKConstraint(String tableName, List<String> columns) {
-        StringBuilder cols = new StringBuilder();
+    public static String createFKConstraint(String childTable, List<String> childFK, String targetTable, List<String> parentPK) {
+        StringBuilder childCols = new StringBuilder();
+        StringBuilder parentCols = new StringBuilder();
+
         String delimiter = ",";
 
-        for (String c:
-             columns) {
-            cols
-                    .append(c)
-                    .append(delimiter);
-        }
-        cols.delete(cols.length() - delimiter.length(), delimiter.length());
-        return String.format(PK_CONSTRAINT, tableName, cols);
+        childCols.append(String.join(delimiter, childFK));
+        if (childFK.size() > 1)childCols.delete(childCols.length() - delimiter.length(), childCols.length());
+
+        parentCols.append(String.join(delimiter, parentPK));
+        if(parentPK.size() > 1) parentCols.delete(parentCols.length() - delimiter.length(), parentCols.length());
+
+        return String.format(FK_CONSTRAINT, childTable, targetTable, childCols, targetTable, parentCols);
     }
 
 }

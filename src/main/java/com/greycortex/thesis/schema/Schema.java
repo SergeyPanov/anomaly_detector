@@ -1,8 +1,6 @@
 package com.greycortex.thesis.schema;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Schema is a list of tables.
@@ -15,6 +13,7 @@ public class Schema {
     }
 
 
+
     /**
      * TODO: Rename this.
      *
@@ -22,7 +21,7 @@ public class Schema {
      */
     public ArrayList<String> getSQLSchema() {
         ArrayList<String> queries = new ArrayList<>();
-        ArrayList<String> constraints = new ArrayList<>();
+        ArrayList<String> fkConstraints = new ArrayList<>();
 
         for (ERDTable table :
                 tables) {
@@ -33,8 +32,19 @@ public class Schema {
                 fields.add((String) entry.getKey());
                 fields.add((String) entry.getValue());
             }
+            fields.addAll(Arrays.asList(DBTemplates.PK, "INTEGER PRIMARY KEY"));
+
+
+            for (ERDTable parentTable:
+                 table.getManyToOne()) {
+                fields.add(parentTable.getName() + DBTemplates.FK_PREFIX);
+                fields.add("INTEGER");
+                fkConstraints.add(DBTemplates.createFKConstraint(table.getName(),  Collections.singletonList(parentTable.getName() + DBTemplates.FK_PREFIX), parentTable.getName(), Collections.singletonList(DBTemplates.PK)));
+            }
             queries.add(DBTemplates.createTable(table.getName(), fields));
+
         }
+        queries.addAll(fkConstraints);
         return queries;
     }
 }

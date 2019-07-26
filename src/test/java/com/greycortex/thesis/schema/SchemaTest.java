@@ -80,11 +80,7 @@ public class SchemaTest {
         Tree tree = new Tree(new JsonWrapper(object));
 
         Schema schema = (new SchemaGenerator()).generateScheme(tree);
-        ArrayList<String> tables = schema.getAll();
-        for (String tbl:
-             tables) {
-            System.out.println(tbl);
-        }
+
     }
 
 }

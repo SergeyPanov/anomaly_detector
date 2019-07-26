@@ -293,40 +293,60 @@ public class SchemaGeneratorTest {
     public void generateScheme4Test() throws ParseException {
         JSONParser parser = new JSONParser();
         JSONObject object = (JSONObject) parser.parse(
-                "{\n" +
-                        "  \"type\": \"object\",\n" +
-                        "  \"properties\": {\n" +
-                        "    \"arrObs1\": {\n" +
-                        "      \"type\": \"array\",\n" +
-                        "      \"items\": {\n" +
-                        "        \"type\": \"object\",\n" +
-                        "        \"properties\": {\n" +
-                        "          \"inn1\": {\n" +
-                        "            \"type\": \"integer\",\n" +
-                        "            \"maximum\": 32767,\n" +
-                        "            \"minimum\": 0\n" +
-                        "          }\n" +
-                        "        },\n" +
-                        "        \"additionalProperties\": false\n" +
-                        "      }\n" +
-                        "    },\n" +
-                        "    \"arrObs2\": {\n" +
-                        "      \"type\": \"array\",\n" +
-                        "      \"items\": {\n" +
-                        "        \"type\": \"object\",\n" +
-                        "        \"properties\": {\n" +
-                        "          \"inn1\": {\n" +
-                        "            \"type\": \"integer\",\n" +
-                        "            \"maximum\": 32767,\n" +
-                        "            \"minimum\": 0\n" +
-                        "          }\n" +
-                        "        },\n" +
-                        "        \"additionalProperties\": false\n" +
-                        "      }\n" +
-                        "    }\n" +
-                        "  },\n" +
-                        "  \"additionalProperties\": false\n" +
-                        "}"
+                    "{\n" +
+                            "  \"type\" : \"object\",\n" +
+                            "  \"properties\" : {\n" +
+                            "    \"arrObs1\" : {\n" +
+                            "      \"type\" : \"array\",\n" +
+                            "      \"items\" : {\n" +
+                            "        \"type\" : \"object\",\n" +
+                            "        \"properties\" : {\n" +
+                            "          \"inn1\" : {\n" +
+                            "            \"type\" : \"integer\",\n" +
+                            "            \"maximum\" : 32767,\n" +
+                            "            \"minimum\" : 0\n" +
+                            "          }\n" +
+                            "        },\n" +
+                            "        \"additionalProperties\" : false\n" +
+                            "      }\n" +
+                            "    },\n" +
+                            "    \"ob\" : {\n" +
+                            "      \"type\" : \"object\",\n" +
+                            "      \"properties\" : {\n" +
+                            "        \"arrObs1\" : {\n" +
+                            "          \"type\" : \"array\",\n" +
+                            "          \"items\" : {\n" +
+                            "            \"type\" : \"object\",\n" +
+                            "            \"properties\" : {\n" +
+                            "              \"inn1\" : {\n" +
+                            "                \"type\" : \"integer\",\n" +
+                            "                \"maximum\" : 32767,\n" +
+                            "                \"minimum\" : 0\n" +
+                            "              }\n" +
+                            "            },\n" +
+                            "            \"additionalProperties\" : false\n" +
+                            "          }\n" +
+                            "        }\n" +
+                            "      },\n" +
+                            "      \"additionalProperties\" : false\n" +
+                            "    },\n" +
+                            "    \"arrObs2\" : {\n" +
+                            "      \"type\" : \"array\",\n" +
+                            "      \"items\" : {\n" +
+                            "        \"type\" : \"object\",\n" +
+                            "        \"properties\" : {\n" +
+                            "          \"inn1\" : {\n" +
+                            "            \"type\" : \"integer\",\n" +
+                            "            \"maximum\" : 32767,\n" +
+                            "            \"minimum\" : 0\n" +
+                            "          }\n" +
+                            "        },\n" +
+                            "        \"additionalProperties\" : false\n" +
+                            "      }\n" +
+                            "    }\n" +
+                            "  },\n" +
+                            "  \"additionalProperties\" : false\n" +
+                            "}\n"
         );
 
         Tree tree = new Tree(new JsonWrapper(object));
@@ -732,4 +752,59 @@ public class SchemaGeneratorTest {
         (new SchemaGenerator()).generateScheme(tree);
     }
 
+
+    @Test
+    public void generateScheme7Test() throws ParseException {
+        JSONParser parser = new JSONParser();
+        JSONObject object = (JSONObject) parser.parse(
+            "{\n" +
+                    "  \"type\" : \"object\",\n" +
+                    "  \"properties\" : {\n" +
+                    "    \"id1\" : {\n" +
+                    "      \"type\" : \"integer\",\n" +
+                    "      \"maximum\" : 32767,\n" +
+                    "      \"minimum\" : 0\n" +
+                    "    },\n" +
+                    "    \"ob1\" : {\n" +
+                    "      \"type\" : \"object\",\n" +
+                    "      \"properties\" : {\n" +
+                    "        \"id2\" : {\n" +
+                    "          \"type\" : \"integer\",\n" +
+                    "          \"maximum\" : 32767,\n" +
+                    "          \"minimum\" : 0\n" +
+                    "        },\n" +
+                    "        \"ob2\" : {\n" +
+                    "          \"type\" : \"object\",\n" +
+                    "          \"properties\" : {\n" +
+                    "            \"id3\" : {\n" +
+                    "              \"type\" : \"integer\",\n" +
+                    "              \"maximum\" : 32767,\n" +
+                    "              \"minimum\" : 0\n" +
+                    "            },\n" +
+                    "            \"ob3\" : {\n" +
+                    "              \"type\" : \"object\",\n" +
+                    "              \"properties\" : {\n" +
+                    "                \"id4\" : {\n" +
+                    "                  \"type\" : \"integer\",\n" +
+                    "                  \"maximum\" : 32767,\n" +
+                    "                  \"minimum\" : 0\n" +
+                    "                }\n" +
+                    "              },\n" +
+                    "              \"additionalProperties\" : false\n" +
+                    "            }\n" +
+                    "          },\n" +
+                    "          \"additionalProperties\" : false\n" +
+                    "        }\n" +
+                    "      },\n" +
+                    "      \"additionalProperties\" : false\n" +
+                    "    }\n" +
+                    "  },\n" +
+                    "  \"additionalProperties\" : false\n" +
+                    "}\n"
+        );
+
+        Tree tree = new Tree(new JsonWrapper(object));
+
+        (new SchemaGenerator()).generateScheme(tree);
+    }
 }

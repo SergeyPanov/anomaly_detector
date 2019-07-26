@@ -1,7 +1,9 @@
 package com.greycortex.thesis.schema;
 
 
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Single table from the
@@ -29,6 +31,9 @@ public class ERDTable {
         this.paths = new Stack<>();
     }
 
+    public List<List<String>> getPaths() {
+        return paths;
+    }
 
     public ERDTable(String name) {
         this(name, new HashMap<>());
@@ -69,35 +74,37 @@ public class ERDTable {
     private void addAllUnique(List<ERDTable> where, List<ERDTable> what) {
         for (ERDTable tb :
                 what) {
-            if (where.stream().noneMatch(el -> el.equals(tb) && el.getName().equals(tb.getName()))) {
+            //            if (where.stream().noneMatch(el -> el.equals(tb) && el.getName().equals(tb.getName()))) {
+            if (where.stream().noneMatch(el -> el.equals(tb) )) {
                 where.add(tb);
             }
         }
     }
 
-    public void addOneToOne(ERDTable tb) {
-        this.oneToOne.add(tb);
+    public void addUniqueOneToOne(ERDTable tb) {
+        addAllUnique(oneToOne, Collections.singletonList(tb));
     }
 
-    public void addOneToOne(List<ERDTable> tbls) {
+    public void addUniqueOneToOne(List<ERDTable> tbls) {
         addAllUnique(oneToOne, tbls);
     }
 
-    public void addManyToOne(ERDTable tb) {
-        this.manyToOne.add(tb);
+    public void addUniqueManyToOne(ERDTable tb) {
+        addAllUnique(manyToOne, Collections.singletonList(tb));
     }
 
-    public void addManyToOne(List<ERDTable> tbls) {
+    public void addUniqueManyToOne(List<ERDTable> tbls) {
         addAllUnique(manyToOne, tbls);
     }
 
-    public void addOneToMany(ERDTable tb) {
-        this.oneToMany.add(tb);
+    public void addUniqueOneToMany(ERDTable tb) {
+        addAllUnique(oneToMany, Collections.singletonList(tb));
     }
-
-    public void addOneToMany(List<ERDTable> tbls) {
+    public void addUniqueOneToMany(List<ERDTable> tbls) {
         addAllUnique(oneToMany, tbls);
     }
+
+
 
 
     /**
@@ -106,32 +113,32 @@ public class ERDTable {
      * @param fst
      * @param snd
      */
-    public void replaceTable(ERDTable fst, ERDTable snd) {
+//    public void replaceTable(ERDTable fst, ERDTable snd) {
+//
+//        if (oneToOne.removeIf(el -> el == fst))
+//            addAllUnique(oneToOne, Collections.singletonList(snd));
+//
+//
+//        if (oneToMany.removeIf(el -> el == fst))
+//            addAllUnique(oneToMany, Collections.singletonList(snd));
+//
+//
+//        if (manyToOne.removeIf(el -> el == fst))
+//            addAllUnique(manyToOne, Collections.singletonList(snd));
+//    }
 
-        if (oneToOne.removeIf(el -> el == fst))
-            addAllUnique(oneToOne, Collections.singletonList(snd));
-
-
-        if (oneToMany.removeIf(el -> el == fst))
-            addAllUnique(oneToMany, Collections.singletonList(snd));
-
-
-        if (manyToOne.removeIf(el -> el == fst))
-            addAllUnique(manyToOne, Collections.singletonList(snd));
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ERDTable table = (ERDTable) o;
-        return Objects.equals(columns, table.columns);
+        ERDTable erdTable = (ERDTable) o;
+        return Objects.equals(paths, erdTable.paths) &&
+                Objects.equals(columns, erdTable.columns);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(columns);
+        return Objects.hash(paths, columns);
     }
-
-
 }

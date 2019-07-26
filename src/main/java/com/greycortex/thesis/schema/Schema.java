@@ -22,6 +22,8 @@ public class Schema {
      */
     public ArrayList<String> getSQLSchema() {
         ArrayList<String> queries = new ArrayList<>();
+        ArrayList<String> constraints = new ArrayList<>();
+
         for (ERDTable table :
                 tables) {
             ArrayList<String> fields = new ArrayList<>();

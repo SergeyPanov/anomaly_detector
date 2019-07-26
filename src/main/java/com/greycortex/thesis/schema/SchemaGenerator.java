@@ -7,17 +7,14 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
-import java.util.stream.Collectors;
+
 
 /**
  * Takes {@link com.greycortex.thesis.trie.Tree} and generate the {@link Schema} from the tree.
  */
 public class SchemaGenerator {
-
-
-
-
     private static final String ARRAY_QUANTIFIER = "[]";
 
     private Stack<Pair<ERDTable, Node>> fstStack = new Stack<>();
@@ -126,9 +123,7 @@ public class SchemaGenerator {
     }
 
 
-
     private void mergeUnique(List<ERDTable> list1, List<ERDTable> list2) {
-
         for (ERDTable tbl :
                 list2) {
             if (!list1.contains(tbl)) {
@@ -222,7 +217,6 @@ public class SchemaGenerator {
         // Re-point One-To-One relations of the snd table on fst table
         for (ERDTable otm:
                 snd.getOneToOne()) {
-
             otm.getOneToOne().remove(snd);
             otm.addUniqueOneToOne(fst);
         }

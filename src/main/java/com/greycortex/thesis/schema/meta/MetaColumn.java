@@ -1,8 +1,12 @@
 package com.greycortex.thesis.schema.meta;
 
+import com.greycortex.thesis.schema.DBTemplates;
 import com.greycortex.thesis.schema.DBTypes;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class MetaColumn {
     private String tableColumn;
@@ -10,7 +14,9 @@ public class MetaColumn {
     private int tableId;
     private String type;
 
-    public MetaColumn(String tableColumn, List<String> path, int tableId, String type) {
+
+
+    public MetaColumn(String tableColumn, String type, List<String> path, int tableId) {
         this.tableColumn = tableColumn;
         this.path = path;
         this.tableId = tableId;
@@ -47,5 +53,27 @@ public class MetaColumn {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void insert() {
+        String statement = DBTemplates.getInsertStatement(DBTemplates.META_COLUMN_NAME, Arrays.asList("name", "type", "path", "table_FK"),
+                Arrays.asList("'" + tableColumn + "'", "'" + type + "'",
+                        "ARRAY [" + path.stream().filter(Objects::nonNull).map(e -> "'" + e + "'").collect(Collectors.joining(",")) + "]", String.valueOf(tableId)));
+        System.out.println(statement);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MetaColumn column = (MetaColumn) o;
+        return Objects.equals(tableColumn, column.tableColumn) &&
+                Objects.equals(path, column.path) &&
+                Objects.equals(type, column.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tableColumn, path, type);
     }
 }

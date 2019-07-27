@@ -8,21 +8,25 @@ import java.util.List;
  */
 public abstract class DBTemplates {
 
+    public static final String META_TABLE_NAME = "meta_tables";
+    public static final String META_COLUMN_NAME = "meta_columns";
+
     public static final String INSERT_STATEMENT = "INSERT INTO %s (%s) VALUES (%s);";
 
     public static final String META_TABLES_TABLE =
-            "CREATE TABLE IF NOT EXISTS \"tables\" (\n" +
+            "CREATE TABLE IF NOT EXISTS " + META_TABLE_NAME + " (\n" +
             "    _ID INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n" +
             "    name varchar,\n" +
-            "    tables_FK INTEGER REFERENCES \"tables\" (_ID)\n" +
+            "    table_FK INTEGER REFERENCES meta_tables (_ID)\n" +
             ");";
 
     public static final String META_COLUMNS_TABLE =
-            "CREATE TABLE IF NOT EXISTS columns(\n" +
+            "CREATE TABLE IF NOT EXISTS " + META_COLUMN_NAME + "(\n" +
             "    _ID INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n" +
             "    path VARCHAR[],\n" +
-            "    typeInJson varchar,\n" +
-            "    table_FK INTEGER REFERENCES \"tables\" (_ID)\n" +
+            "    type varchar,\n" +
+            "    name varchar,\n" +
+            "    table_FK INTEGER REFERENCES meta_tables (_ID)\n" +
             ");";
 
     public final static String FK_PREFIX = "_FK";

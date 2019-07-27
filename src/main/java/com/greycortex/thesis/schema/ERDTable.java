@@ -1,6 +1,7 @@
 package com.greycortex.thesis.schema;
 
 
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -10,6 +11,7 @@ import java.util.*;
  * Single table from the
  */
 public class ERDTable {
+
     private String name;
 
     private List<String> basePath;
@@ -22,14 +24,25 @@ public class ERDTable {
 
     private List<ERDTable> oneToMany;
 
+    private boolean insertedMeta = false;
+
+
 
     public ERDTable(String name) {
-        this.name = name;
+        this.setName(name);
         this.oneToOne = new ArrayList<>();
         this.manyToOne = new ArrayList<>();
         this.oneToMany = new ArrayList<>();
         this.columns = new HashMap<>();
         this.basePath = new ArrayList<>();
+    }
+
+    public boolean isInsertedMeta() {
+        return insertedMeta;
+    }
+
+    public void setInsertedMeta(boolean insertedMeta) {
+        this.insertedMeta = insertedMeta;
     }
 
 
@@ -112,13 +125,6 @@ public class ERDTable {
         addAllUnique(oneToMany, tbls);
     }
 
-
-    /**
-     * Instead of fst set snd
-     *
-     * @param fst
-     * @param snd
-     */
 //    public void replaceTable(ERDTable fst, ERDTable snd) {
 //
 //        if (oneToOne.removeIf(el -> el == fst))

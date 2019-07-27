@@ -1,13 +1,29 @@
 package com.greycortex.thesis.schema;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Holds templates for postgres entities creation.
  */
 public abstract class DBTemplates {
+
+    public static final String INSERT_STATEMENT = "INSERT INTO %s (%s) VALUES (%s);";
+
+    public static final String META_TABLES_TABLE =
+            "CREATE TABLE IF NOT EXISTS \"tables\" (\n" +
+            "    _ID INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n" +
+            "    name varchar,\n" +
+            "    tables_FK INTEGER REFERENCES \"tables\" (_ID)\n" +
+            ");";
+
+    public static final String META_COLUMNS_TABLE =
+            "CREATE TABLE IF NOT EXISTS columns(\n" +
+            "    _ID INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n" +
+            "    path VARCHAR[],\n" +
+            "    typeInJson varchar,\n" +
+            "    table_FK INTEGER REFERENCES \"tables\" (_ID)\n" +
+            ");";
 
     public final static String FK_PREFIX = "_FK";
     public final static String PK = "_PK";
@@ -45,12 +61,20 @@ public abstract class DBTemplates {
         String delimiter = ",";
 
         childCols.append(String.join(delimiter, childFK));
-        if (childFK.size() > 1)childCols.delete(childCols.length() - delimiter.length(), childCols.length());
+//        if (childFK.size() > 1) childCols.delete(childCols.length() - delimiter.length(), childCols.length());
 
         parentCols.append(String.join(delimiter, parentPK));
-        if(parentPK.size() > 1) parentCols.delete(parentCols.length() - delimiter.length(), parentCols.length());
+//        if(parentPK.size() > 1) parentCols.delete(parentCols.length() - delimiter.length(), parentCols.length());
 
         return String.format(FK_CONSTRAINT, childTable, targetTable, childCols, targetTable, parentCols);
+    }
+
+
+    public static String getInsertStatement(String name, List<String> columns, List<String> values) {
+        String delimiter = ",";
+        String cols = String.join(delimiter, columns);
+        String vals = String.join(delimiter, values);
+        return String.format(INSERT_STATEMENT, name, cols, vals);
     }
 
 }

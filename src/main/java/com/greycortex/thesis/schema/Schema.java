@@ -1,5 +1,9 @@
 package com.greycortex.thesis.schema;
 
+import com.greycortex.thesis.schema.meta.MetaColumn;
+import com.greycortex.thesis.schema.meta.MetaTable;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import java.util.*;
 
 /**
@@ -12,29 +16,30 @@ public class Schema {
         this.tables = tables;
     }
 
-
-
     /**
-     * TODO: Rename this.
-     *
      * @return list of queries for schema creation
      */
     public ArrayList<String> getSQLSchema() {
-        ArrayList<String> queries = new ArrayList<>();
         ArrayList<String> fkConstraints = new ArrayList<>();
+
+        ArrayList<String> queries = new ArrayList<>(Arrays.asList(DBTemplates.META_TABLES_TABLE, DBTemplates.META_COLUMNS_TABLE));
 
         for (ERDTable table :
                 tables) {
             ArrayList<String> fields = new ArrayList<>();
 
+            // Compose columns
             for (Map.Entry entry :
                     table.getColumns().entrySet()) {
-                fields.add((String) entry.getKey());
-                fields.add((String) entry.getValue());
+                ImmutablePair<String, String> column = (ImmutablePair<String, String>) entry.getKey();
+
+                fields.add(column.getKey());
+                fields.add(column.getValue());
             }
-            fields.addAll(Arrays.asList(DBTemplates.PK, "INTEGER PRIMARY KEY"));
 
+            fields.addAll(Arrays.asList(DBTemplates.PK, "INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY"));
 
+            // Generate FK constraints
             for (ERDTable parentTable:
                  table.getManyToOne()) {
                 fields.add(parentTable.getName() + DBTemplates.FK_PREFIX);
@@ -43,7 +48,10 @@ public class Schema {
             }
             queries.add(DBTemplates.createTable(table.getName(), fields));
 
+
+            // Generate metadata insertion
         }
+
         queries.addAll(fkConstraints);
         return queries;
     }

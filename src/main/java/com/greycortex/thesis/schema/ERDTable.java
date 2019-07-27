@@ -1,9 +1,10 @@
 package com.greycortex.thesis.schema;
 
 
-import java.lang.reflect.Array;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Single table from the
@@ -11,9 +12,9 @@ import java.util.stream.Collectors;
 public class ERDTable {
     private String name;
 
-    private List<List<String>> paths;
+    private List<String> basePath;
 
-    private HashMap<String, String> columns;
+    private Map<Pair<String, String>, List<String>> columns;
 
     private List<ERDTable> oneToOne;
 
@@ -22,25 +23,29 @@ public class ERDTable {
     private List<ERDTable> oneToMany;
 
 
-    public ERDTable(String name, HashMap<String, String> columns) {
+    public ERDTable(String name) {
         this.name = name;
-        this.columns = columns;
         this.oneToOne = new ArrayList<>();
         this.manyToOne = new ArrayList<>();
         this.oneToMany = new ArrayList<>();
-        this.paths = new Stack<>();
+        this.columns = new HashMap<>();
+        this.basePath = new ArrayList<>();
     }
 
-    public List<List<String>> getPaths() {
-        return paths;
+
+    public List<String> getBasePath() {
+        return basePath;
     }
 
-    public ERDTable(String name) {
-        this(name, new HashMap<>());
+    public void setBasePath(List<String> basePath) {
+        this.basePath = basePath;
     }
 
-    public HashMap<String, String> getColumns() {
-        return columns;
+
+    public List<String> getPathForElement(String element) {
+        List<String> path = new ArrayList<>(basePath);
+        path.add(element);
+        return path;
     }
 
     public String getName() {
@@ -51,9 +56,14 @@ public class ERDTable {
         this.name = name;
     }
 
-    public void setColumn(String name, String type) {
-        columns.put(name, type);
+    public Map<Pair<String, String>, List<String>> getColumns() {
+        return columns;
     }
+
+    public void setNewColumn(String columnName, String type, List<String> path) {
+        this.columns.put(new ImmutablePair<>(columnName, type), path);
+    }
+
 
     public List<ERDTable> getOneToOne() {
         return oneToOne;
@@ -67,15 +77,12 @@ public class ERDTable {
         return oneToMany;
     }
 
-    public void addPath(List<String> pth) {
-        paths.add(pth);
-    }
 
     private void addAllUnique(List<ERDTable> where, List<ERDTable> what) {
         for (ERDTable tb :
                 what) {
-            //            if (where.stream().noneMatch(el -> el.equals(tb) && el.getName().equals(tb.getName()))) {
-            if (where.stream().noneMatch(el -> el.equals(tb) )) {
+            if (where.stream().noneMatch(el -> el.equals(tb) && el.getName().equals(tb.getName()))) {
+//            if (where.stream().noneMatch(el -> el.equals(tb) )) {
                 where.add(tb);
             }
         }
@@ -100,11 +107,10 @@ public class ERDTable {
     public void addUniqueOneToMany(ERDTable tb) {
         addAllUnique(oneToMany, Collections.singletonList(tb));
     }
+
     public void addUniqueOneToMany(List<ERDTable> tbls) {
         addAllUnique(oneToMany, tbls);
     }
-
-
 
 
     /**
@@ -133,12 +139,12 @@ public class ERDTable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ERDTable erdTable = (ERDTable) o;
-        return Objects.equals(paths, erdTable.paths) &&
+        return Objects.equals(basePath, erdTable.basePath) &&
                 Objects.equals(columns, erdTable.columns);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(paths, columns);
+        return Objects.hash(basePath, columns);
     }
 }

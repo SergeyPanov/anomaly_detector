@@ -14,7 +14,7 @@ public class Tree {
 
     public Tree(JsonWrapper object) {
         this.object = object;
-        root = new Node(new JsonComplex("root", null));
+        root = new Node(new JsonComplex(null, null));
         init();
     }
 
@@ -173,7 +173,6 @@ public class Tree {
                         trieConstructStack.push(new MutablePair<>(auxNode, nextInput));
 
                     }
-
                 }
             }
         }

@@ -21,8 +21,11 @@ public class SchemaGenerator {
 
     private List<ERDTable> schema = new ArrayList<>();
 
+    private Stack<String> path;
+
     /**
      * Iterative post order traverse
+     *
      * @param tree
      * @return
      */
@@ -30,11 +33,11 @@ public class SchemaGenerator {
         fstStack = new Stack<>();
 
         ERDTable tbl = new ERDTable("root");
-        tbl.addPath(new ArrayList<>());
+        tbl.setBasePath(new ArrayList<>());
 
         fstStack.push(new MutablePair<>(tbl, tree.getRoot()));
 
-        List<String> path = new ArrayList<>();
+        path = new Stack<>();
 
         while (!fstStack.isEmpty()) {
             Pair<ERDTable, Node> currentRoot = fstStack.pop();
@@ -42,7 +45,7 @@ public class SchemaGenerator {
             ERDTable rootTable = currentRoot.getKey();
             Node root = currentRoot.getValue();
 
-            path.add(root.getName());
+            path.push(root.getName());
 
             ArrayList<Node> children = root.getChildren();
 
@@ -50,22 +53,26 @@ public class SchemaGenerator {
                     children) {
                 if (!child.isComplex()) {
                     // Simple value(STRING, NUMBER ...)
-                    rootTable.setColumn(child.getName(), DBTypes.getEnum(child.getType().iterator().next().getValue()).toString());
+                    rootTable.setNewColumn(child.getName(),
+                            DBTypes.getEnum(child.getType().iterator().next().getValue()).toString(),
+                            rootTable.getPathForElement(child.getName()));
+
                 } else {
                     if (child.isArray()) {
                         child.getChildren().forEach(elems -> {
 
                             if (elems.isObject()) {
                                 // Array of objects [OBJECT]
-                                path.add(child.getName());
+                                path.push(child.getName());
 
                                 ERDTable manyToOneTbl = new ERDTable(elems.getName());
                                 manyToOneTbl.addUniqueManyToOne(rootTable);
                                 rootTable.addUniqueOneToMany(manyToOneTbl);
                                 fstStack.push(new MutablePair<>(manyToOneTbl, elems));
 
-                                manyToOneTbl.addPath(new ArrayList<>(path));
-                                path.remove(path.size() - 1);
+                                manyToOneTbl.setBasePath(new ArrayList<>(path));
+
+                                path.pop();
 
                             } else {
                                 // Mixed Array, contains only simple types and objects !! DOES NOT CONSIDER INNER ARRAYS !!
@@ -75,43 +82,42 @@ public class SchemaGenerator {
                                             elems.getChildren()) {
                                         if (!el.isComplex()) {
 
-                                            rootTable.setColumn(el.getName() + "_" + el.getType().iterator().next().getValue(),
-                                                    DBTypes.getEnum(el.getType().iterator().next().getValue()).toString());
-
-                                            rootTable.setColumn(el.getName() + "_" + el.getType().iterator().next().getValue(),
-                                                    DBTypes.getEnum(el.getType().iterator().next().getValue()).toString() + ARRAY_QUANTIFIER );
+                                            rootTable.setNewColumn(el.getName() + "_" + el.getType().iterator().next().getValue(),
+                                                    DBTypes.getEnum(el.getType().iterator().next().getValue()).toString() + ARRAY_QUANTIFIER,
+                                                    rootTable.getPathForElement(el.getName()));
                                         } else {
                                             // Many-To-Many
-                                            path.add(child.getName());
+                                            path.push(child.getName());
 
                                             ERDTable manyToOneTbl = new ERDTable(el.getName());
                                             manyToOneTbl.addUniqueManyToOne(rootTable);
                                             rootTable.addUniqueOneToMany(manyToOneTbl);
                                             fstStack.push(new MutablePair<>(manyToOneTbl, el));
 
-                                            manyToOneTbl.addPath(new ArrayList<>(path));
-                                            path.remove(path.size() - 1);
+                                            manyToOneTbl.setBasePath(new ArrayList<>(path));
+                                            path.pop();
                                         }
                                     }
                                 } else {
                                     // Just simple type [STRING | INTEGER...]
-                                    rootTable.setColumn(elems.getName(),
-                                            DBTypes.getEnum(elems.getType().iterator().next().getValue()).toString() + ARRAY_QUANTIFIER);
+                                    rootTable.setNewColumn(elems.getName(),
+                                            DBTypes.getEnum(elems.getType().iterator().next().getValue()).toString() + ARRAY_QUANTIFIER,
+                                            rootTable.getPathForElement(elems.getName()));
                                 }
                             }
                         });
                     }
                     if (child.isObject()) {
                         // One-To-One relation
-                        path.add(child.getName());
+                        path.push(child.getName());
 
                         ERDTable oneToOneTbl = new ERDTable(child.getName());
                         oneToOneTbl.addUniqueOneToOne(rootTable);
                         rootTable.addUniqueOneToOne(oneToOneTbl);
                         fstStack.push(new MutablePair<>(oneToOneTbl, child));
 
-                        oneToOneTbl.addPath(new ArrayList<>(path));
-                        path.remove(path.size() - 1);
+                        oneToOneTbl.setBasePath(new ArrayList<>(path));
+                        path.pop();
                     }
                 }
             }
@@ -132,14 +138,13 @@ public class SchemaGenerator {
         }
     }
 
-
     /**
      * Inline tables in One-To-One relation.
      * Remove inlined tables from the @tables
+     *
      * @param tables list of tables.
      */
     private void inlineAllTables(List<ERDTable> tables) {
-
         int index = 0;
         int length = tables.size();
         while (index < length) {
@@ -159,12 +164,14 @@ public class SchemaGenerator {
 
         }
     }
+
     /**
      * Inline @snd table into fst table.
      * Steps for inline:
-     *  1. Copy all columns from the @snd table into @fst table TODO: What if meet the same column names and types????
-     *  2. Copy all paths from the @snd table into @fst table
-     *  3. Update relation pointers.
+     * 1. Copy all columns from the @snd table into @fst table TODO: What if meet the same column names and types????
+     * 2. Copy all paths from the @snd table into @fst table
+     * 3. Update relation pointers.
+     *
      * @param fst
      * @param snd
      * @return
@@ -174,15 +181,10 @@ public class SchemaGenerator {
         fst.setName(fst.getName() + "_" + snd.getName());
 
         // Copy all columns of snd table into fst table
-        for (Map.Entry entry:
-             snd.getColumns().entrySet()) {
-            fst.setColumn( (String) entry.getKey(), (String) entry.getValue());
-        }
-
-        // Add paths from snd table into fst table(metadata for insert)
-        for (List<String> pt:
-             snd.getPaths()) {
-            fst.addPath(new ArrayList<>(pt));
+        for (Map.Entry entry :
+                snd.getColumns().entrySet()) {
+            Pair<String, String> tablePair = (Pair<String, String>) entry.getKey();
+            fst.setNewColumn(tablePair.getKey(), tablePair.getValue(), (List<String>) entry.getValue());
         }
 
         /*
@@ -195,8 +197,8 @@ public class SchemaGenerator {
         // Add all One-To-Many relations from the snd table into fst table
         fst.addUniqueOneToMany(snd.getOneToMany());
         // Re-point Many-To-One relations of the snd table on fst table
-        for (ERDTable mto:
-            snd.getManyToOne()) {
+        for (ERDTable mto :
+                snd.getManyToOne()) {
 
             mto.getOneToMany().remove(snd);
             mto.addUniqueOneToMany(fst);
@@ -205,8 +207,8 @@ public class SchemaGenerator {
         // Add all Many-To-One relations from the snd table into fst table
         fst.addUniqueManyToOne(snd.getManyToOne());
         // Re-point One-To-Many relations of the snd table on fst table
-        for (ERDTable otm:
-             snd.getOneToMany()) {
+        for (ERDTable otm :
+                snd.getOneToMany()) {
 
             otm.getManyToOne().remove(snd);
             otm.addUniqueManyToOne(fst);
@@ -215,7 +217,7 @@ public class SchemaGenerator {
         // Add all One-To-One relations from snd to fst
         fst.addUniqueOneToOne(snd.getOneToOne());
         // Re-point One-To-One relations of the snd table on fst table
-        for (ERDTable otm:
+        for (ERDTable otm :
                 snd.getOneToOne()) {
             otm.getOneToOne().remove(snd);
             otm.addUniqueOneToOne(fst);

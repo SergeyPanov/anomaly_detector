@@ -728,9 +728,7 @@ public class SchemaGeneratorTest {
         Tree tree = new Tree(new JsonWrapper(object1));
         Schema schema = (new SchemaGenerator()).generateScheme(tree);
         schema.getSQLSchema();
-
     }
-
 
     /**
      * {
@@ -770,14 +768,16 @@ public class SchemaGeneratorTest {
     public void generateScheme3Test() {
         Tree tree = new Tree(new JsonWrapper(object3));
         Schema schema = (new SchemaGenerator()).generateScheme(tree);
-        schema.getSQLSchema();    }
+        schema.getSQLSchema();
+    }
 
     @Test
     public void generateScheme4Test() {
         Tree tree = new Tree(new JsonWrapper(object4));
 
         Schema schema = (new SchemaGenerator()).generateScheme(tree);
-        schema.getSQLSchema();    }
+        schema.getSQLSchema();
+    }
 
 
     @Test
@@ -785,7 +785,8 @@ public class SchemaGeneratorTest {
         Tree tree = new Tree(new JsonWrapper(object5));
 
         Schema schema = (new SchemaGenerator()).generateScheme(tree);
-        schema.getSQLSchema();    }
+        schema.getSQLSchema();
+    }
 
 
     @Test
@@ -795,14 +796,16 @@ public class SchemaGeneratorTest {
         Tree tree = new Tree(new JsonWrapper(objectSMB));
 
         Schema schema = (new SchemaGenerator()).generateScheme(tree);
-        schema.getSQLSchema();    }
+        schema.getSQLSchema();
+    }
 
     @Test
     public void generateScheme6Test() {
         Tree tree = new Tree(new JsonWrapper(object6));
 
         Schema schema = (new SchemaGenerator()).generateScheme(tree);
-        schema.getSQLSchema();    }
+        schema.getSQLSchema();
+    }
 
 
     @Test

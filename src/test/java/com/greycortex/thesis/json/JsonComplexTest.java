@@ -1,5 +1,11 @@
 package com.greycortex.thesis.json;
 
+
+
+import com.greycortex.thesis.trie.Tree;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,110 +15,174 @@ import java.util.HashSet;
 
 public class JsonComplexTest {
 
+    /**
+     * Same
+     * @throws ParseException
+     */
     @Test
-    public void equalsTest() {
-        JsonComplex complex1 = new JsonComplex("complex", new HashSet<>(Arrays.asList(Type.STRING, Type.INTEGER, Type.ARRAY)));
-        JsonComplex complex2 = new JsonComplex("complex", new HashSet<>(Arrays.asList(Type.STRING, Type.INTEGER, Type.ARRAY)));
+    public void equalsTest() throws ParseException {
+        JsonComplex c1 = new JsonComplex("cmplx", new HashSet<>(Collections.singletonList(Type.OBJECT)));
 
+        JsonSimple s1 = new JsonSimple("simpl1", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple s2 = new JsonSimple("simpl2", new HashSet<>(Collections.singletonList(Type.INTEGER)));
 
-        JsonSimple sm1 = new JsonSimple("simple_name", new HashSet<>(Collections.singletonList(Type.STRING)), "date");
-        JsonSimple sm2 = new JsonSimple("simple_name", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        c1.add(s1);
+        c1.add(s2);
 
-        JsonComplex arr = new JsonComplex("arr", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonComplex c2 = new JsonComplex("cmplx", new HashSet<>(Collections.singletonList(Type.OBJECT)));
 
-        JsonSimple arrEl = new JsonSimple("el", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple ss1 = new JsonSimple("simpl1", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple ss2 = new JsonSimple("simpl2", new HashSet<>(Collections.singletonList(Type.INTEGER)));
 
-        arr.add(arrEl);
-        complex1.add(sm1);
-        complex1.add(sm2);
-        complex1.add(arr);
+        c2.add(ss1);
+        c2.add(ss2);
 
-
-        ///////////////////////////////////
-        sm1 = new JsonSimple("simple_name", new HashSet<>(Collections.singletonList(Type.STRING)), "date");
-        sm2 = new JsonSimple("simple_name", new HashSet<>(Collections.singletonList(Type.INTEGER)));
-
-        arr = new JsonComplex("arr", new HashSet<>(Collections.singletonList(Type.INTEGER)));
-
-        arrEl = new JsonSimple("el", new HashSet<>(Collections.singletonList(Type.INTEGER)));
-        arr.add(arrEl);
-        complex2.add(sm1);
-        complex2.add(sm2);
-        complex2.add(arr);
-
-        Assert.assertEquals(complex1, complex2);
-
+        Assert.assertEquals(c1, c2);
     }
 
 
+    /**
+     * Different names: simpl VS simpl1
+     * @throws ParseException
+     */
     @Test
-    public void notEqualsDiffNameTest() {
-        JsonComplex complex1 = new JsonComplex("complex", new HashSet<>(Arrays.asList(Type.STRING, Type.INTEGER, Type.ARRAY)));
-        JsonComplex complex2 = new JsonComplex("complex", new HashSet<>(Arrays.asList(Type.STRING, Type.INTEGER, Type.ARRAY)));
+    public void notEqualsTest() throws ParseException {
+        JsonComplex c1 = new JsonComplex("cmplx", new HashSet<>(Collections.singletonList(Type.OBJECT)));
 
+        JsonSimple s1 = new JsonSimple("simpl", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple s2 = new JsonSimple("simpl2", new HashSet<>(Collections.singletonList(Type.INTEGER)));
 
-        JsonSimple sm1 = new JsonSimple("simple_name", new HashSet<>(Collections.singletonList(Type.STRING)), "date");
-        JsonSimple sm2 = new JsonSimple("simple_name", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        c1.add(s1);
+        c1.add(s2);
 
-        JsonComplex arr = new JsonComplex("arr", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonComplex c2 = new JsonComplex("cmplx", new HashSet<>(Collections.singletonList(Type.OBJECT)));
 
-        JsonSimple arrEl = new JsonSimple("el", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple ss1 = new JsonSimple("simpl1", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple ss2 = new JsonSimple("simpl2", new HashSet<>(Collections.singletonList(Type.INTEGER)));
 
-        arr.add(arrEl);
-        complex1.add(sm1);
-        complex1.add(sm2);
-        complex1.add(arr);
+        c2.add(ss1);
+        c2.add(ss2);
 
-
-        ///////////////////////////////////
-        sm1 = new JsonSimple("simple_name", new HashSet<>(Collections.singletonList(Type.STRING)), "date");
-        sm2 = new JsonSimple("simple_name", new HashSet<>(Collections.singletonList(Type.INTEGER)));
-
-        arr = new JsonComplex("arr", new HashSet<>(Collections.singletonList(Type.INTEGER)));
-
-        arrEl = new JsonSimple("diff_name", new HashSet<>(Collections.singletonList(Type.INTEGER)));
-        arr.add(arrEl);
-        complex2.add(sm1);
-        complex2.add(sm2);
-        complex2.add(arr);
-
-        Assert.assertNotEquals(complex1, complex2);
-
+        Assert.assertNotEquals(c1, c2);
     }
 
+
+
     @Test
-    public void notEqualsDiffTypeTest() {
-        JsonComplex complex1 = new JsonComplex("complex", new HashSet<>(Arrays.asList(Type.STRING, Type.INTEGER, Type.ARRAY)));
-        JsonComplex complex2 = new JsonComplex("complex", new HashSet<>(Arrays.asList(Type.STRING, Type.INTEGER, Type.ARRAY)));
+    public void equalsArraysTest() throws ParseException {
+        JsonComplex c1 = new JsonComplex("cmplx", new HashSet<>(Collections.singletonList(Type.ARRAY)));
 
+        JsonSimple s1 = new JsonSimple("simpl1", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple s2 = new JsonSimple("simpl2", new HashSet<>(Collections.singletonList(Type.STRING)));
 
-        JsonSimple sm1 = new JsonSimple("simple_name", new HashSet<>(Collections.singletonList(Type.STRING)), "date");
-        JsonSimple sm2 = new JsonSimple("simple_name", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        c1.add(s1);
+        c1.add(s2);
 
-        JsonComplex arr = new JsonComplex("arr", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonComplex c2 = new JsonComplex("cmplx", new HashSet<>(Collections.singletonList(Type.ARRAY)));
 
-        JsonSimple arrEl = new JsonSimple("el", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple ss1 = new JsonSimple("simpl1", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple ss2 = new JsonSimple("simpl2", new HashSet<>(Collections.singletonList(Type.STRING)));
 
-        arr.add(arrEl);
-        complex1.add(sm1);
-        complex1.add(sm2);
-        complex1.add(arr);
+        c2.add(ss1);
+        c2.add(ss2);
 
-
-        ///////////////////////////////////
-        sm1 = new JsonSimple("simple_name", new HashSet<>(Collections.singletonList(Type.STRING)), "date");
-        sm2 = new JsonSimple("simple_name", new HashSet<>(Collections.singletonList(Type.INTEGER)));
-
-        arr = new JsonComplex("arr", new HashSet<>(Collections.singletonList(Type.INTEGER)));
-
-        arrEl = new JsonSimple("el", new HashSet<>(Collections.singletonList(Type.NUMBER)));
-        arr.add(arrEl);
-        complex2.add(sm1);
-        complex2.add(sm2);
-        complex2.add(arr);
-
-        Assert.assertNotEquals(complex1, complex2);
-
+        Assert.assertEquals(c1, c2);
     }
 
+    /**
+     * Different types: INTEGER VS BOOLEAN
+     * @throws ParseException
+     */
+    @Test
+    public void notEqualsArraysTest() throws ParseException {
+        JsonComplex c1 = new JsonComplex("cmplx", new HashSet<>(Collections.singletonList(Type.ARRAY)));
+
+        JsonSimple s1 = new JsonSimple("simpl1", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple s2 = new JsonSimple("simpl2", new HashSet<>(Collections.singletonList(Type.STRING)));
+
+        c1.add(s1);
+        c1.add(s2);
+
+        JsonComplex c2 = new JsonComplex("cmplx", new HashSet<>(Collections.singletonList(Type.ARRAY)));
+
+        JsonSimple ss1 = new JsonSimple("simpl1", new HashSet<>(Collections.singletonList(Type.BOOLEAN)));
+        JsonSimple ss2 = new JsonSimple("simpl2", new HashSet<>(Collections.singletonList(Type.STRING)));
+
+        c2.add(ss1);
+        c2.add(ss2);
+
+        Assert.assertNotEquals(c1, c2);
+    }
+
+    /**
+     * Same
+     * @throws ParseException
+     */
+    @Test
+    public void equalsObjectsTest() throws ParseException {
+        JsonComplex c1 = new JsonComplex("cmplx", new HashSet<>(Collections.singletonList(Type.OBJECT)));
+        JsonComplex arr1 = new JsonComplex("arr", new HashSet<>(Collections.singletonList(Type.ARRAY)));
+
+        JsonSimple s1 = new JsonSimple("simpl1", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple s2 = new JsonSimple("simpl2", new HashSet<>(Collections.singletonList(Type.STRING)));
+
+        JsonSimple s3 = new JsonSimple("items", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        arr1.add(s3);
+
+
+        c1.add(s1);
+        c1.add(s2);
+        c1.add(arr1);
+
+        JsonComplex c2 = new JsonComplex("cmplx", new HashSet<>(Collections.singletonList(Type.OBJECT)));
+        JsonComplex arr2 = new JsonComplex("arr", new HashSet<>(Collections.singletonList(Type.ARRAY)));
+
+        JsonSimple ss1 = new JsonSimple("simpl1", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple ss2 = new JsonSimple("simpl2", new HashSet<>(Collections.singletonList(Type.STRING)));
+
+        JsonSimple ss3 = new JsonSimple("items", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        arr2.add(ss3);
+
+        c2.add(ss1);
+        c2.add(ss2);
+        c2.add(arr2);
+
+        Assert.assertEquals(c1, c2);
+    }
+
+    /**
+     * Different elements in array.
+     * @throws ParseException
+     */
+    @Test
+    public void notEqualsObjectsTest() throws ParseException {
+        JsonComplex c1 = new JsonComplex("cmplx", new HashSet<>(Collections.singletonList(Type.OBJECT)));
+        JsonComplex arr1 = new JsonComplex("arr", new HashSet<>(Collections.singletonList(Type.ARRAY)));
+
+        JsonSimple s1 = new JsonSimple("simpl1", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple s2 = new JsonSimple("simpl2", new HashSet<>(Collections.singletonList(Type.STRING)));
+
+        JsonSimple s3 = new JsonSimple("items", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+
+        arr1.add(s3);
+
+
+        c1.add(s1);
+        c1.add(s2);
+        c1.add(s3);
+
+        JsonComplex c2 = new JsonComplex("cmplx", new HashSet<>(Collections.singletonList(Type.OBJECT)));
+        JsonComplex arr2 = new JsonComplex("arr", new HashSet<>(Collections.singletonList(Type.ARRAY)));
+
+        JsonSimple ss1 = new JsonSimple("simpl1", new HashSet<>(Collections.singletonList(Type.INTEGER)));
+        JsonSimple ss2 = new JsonSimple("simpl2", new HashSet<>(Collections.singletonList(Type.STRING)));
+
+        JsonSimple ss3 = new JsonSimple("items", new HashSet<>(Collections.singletonList(Type.STRING)));
+
+        c2.add(ss1);
+        c2.add(ss2);
+        c2.add(ss3);
+
+        Assert.assertNotEquals(c1, c2);
+    }
 }

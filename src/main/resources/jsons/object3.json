@@ -1,0 +1,17 @@
+{
+  "id": 1,
+  "arrObs": [
+    {
+      "innerNum": 1,
+      "innerStr": "shiiit",
+      "otherObs": [
+        {
+          "id": 1,
+          "diff": {
+            "arr": [1,2,3]
+          }
+        }
+      ]
+    }
+  ]
+}

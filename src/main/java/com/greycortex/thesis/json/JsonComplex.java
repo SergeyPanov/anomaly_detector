@@ -1,19 +1,20 @@
 package com.greycortex.thesis.json;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import com.greycortex.thesis.schema.ERDTable;
+
+import java.util.*;
 
 public class JsonComplex extends JsonAbstract {
-    private List<JsonAbstract> elements;
+    private static final int ONLY_INDEX = 0;
+
+    private ArrayList<JsonAbstract> elements;
 
     public JsonComplex(String name, Set<Type> type) {
         super(name, type);
         this.elements = new ArrayList<>();
     }
 
-    public JsonComplex(){
+    public JsonComplex() {
         this(null, null);
     }
 
@@ -21,38 +22,33 @@ public class JsonComplex extends JsonAbstract {
         return elements.get(i);
     }
 
-    public void add(JsonAbstract el) {
-        elements.add(el);
-    }
     public void add(int index, JsonAbstract el) {
         elements.add(index, el);
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
+    public void add(JsonAbstract el) {elements.add(el);}
 
-        builder.append("{")
-        .append("name: ")
-        .append(getName())
-        .append(", ")
-        .append("type: ")
-        .append(getType());
-
-        if (elements.size() > 0){
-            builder.append(", ");
-        }
-
-        for (int i = 0; i < elements.size(); i++) {
-            builder.append(elements.get(i).toString());
-            if (i != elements.size() - 1) {
-                builder.append(", ");
+    private boolean areOnlySimples() {
+        for (JsonAbstract el :
+                elements) {
+            for (Type t:
+                    el.getType()) {
+                if (!t.isSimple()) return false;
             }
         }
+        return true;
+    }
 
-        builder.append("}");
 
-        return builder.toString();
+    public boolean isArrayOfSimples() {
+        return
+                getType().iterator().next() == Type.ARRAY &&
+                        // has only one children with simple type(type of the children is made with only one "Type" with is simple)
+                        areOnlySimples();
+    }
+
+    public ArrayList<JsonAbstract> getChildren() {
+        return elements;
     }
 
     @Override
@@ -67,5 +63,32 @@ public class JsonComplex extends JsonAbstract {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), elements);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+
+        builder.append("{")
+                .append("name: ")
+                .append(getName())
+                .append(", ")
+                .append("type: ")
+                .append(getType());
+
+        if (elements.size() > 0) {
+            builder.append(", ");
+        }
+
+        for (int i = 0; i < elements.size(); i++) {
+            builder.append(elements.get(i).toString());
+            if (i != elements.size() - 1) {
+                builder.append(", ");
+            }
+        }
+
+        builder.append("}");
+
+        return builder.toString();
     }
 }

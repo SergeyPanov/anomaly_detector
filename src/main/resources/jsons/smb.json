@@ -1,0 +1,191 @@
+{
+  "start_time": "2019-05-07T14:47:04.000429+02:00",
+  "end_time": "2019-05-07T14:48:05.636545+02:00",
+  "src_ip_addr": "192.168.137.250",
+  "dst_ip_addr": "192.168.137.5",
+  "src_domains": null,
+  "dst_domains": [
+    "win-server2019.gc.local"
+  ],
+  "dst_port": 445,
+  "service": "SMB",
+  "apps": null,
+  "src_pktcnt": 11,
+  "dst_pktcnt": 10,
+  "src_octets": 1490,
+  "dst_octets": 1650,
+  "src_app": [
+    {
+      "new": true,
+      "id": 1,
+      "tree_id": 0,
+      "session_id": 0,
+      "command": "SMB2_COMMAND_KEEPALIVE"
+    },
+    {
+      "new": true,
+      "id": 2,
+      "tree_id": 1,
+      "session_id": 70378407854117,
+      "command": "SMB2_COMMAND_CREATE",
+      "filename": "<share_root>",
+      "disposition": "FILE_OPEN",
+      "access": "normal"
+    },
+    {
+      "new": true,
+      "id": 3,
+      "tree_id": 1,
+      "session_id": 70378407854117,
+      "command": "SMB2_COMMAND_GET_INFO",
+      "get_info": {
+        "class": "FILE_INFO",
+        "info_level": "0x12",
+        "fuid": "00004cc4-0010-0000-0001-000000000010"
+      }
+    },
+    {
+      "new": true,
+      "id": 4,
+      "tree_id": 1,
+      "session_id": 70378407854117,
+      "command": "SMB2_COMMAND_CREATE",
+      "filename": "<share_root>",
+      "disposition": "FILE_OPEN",
+      "access": "normal"
+    },
+    {
+      "new": true,
+      "id": 5,
+      "tree_id": 1,
+      "session_id": 70378407854117,
+      "command": "SMB2_COMMAND_GET_INFO",
+      "get_info": {
+        "class": "0x2",
+        "info_level": "0x7",
+        "fuid": "ffffffff-ffff-ffff-ffff-ffffffffffff"
+      }
+    },
+    {
+      "new": true,
+      "id": 6,
+      "tree_id": 1,
+      "session_id": 70378407854117,
+      "command": "SMB2_COMMAND_CLOSE"
+    },
+    {
+      "new": true,
+      "id": 7,
+      "tree_id": 1,
+      "session_id": 70378407854117,
+      "command": "SMB2_COMMAND_TREE_DISCONNECT"
+    },
+    {
+      "new": true,
+      "id": 8,
+      "tree_id": 0,
+      "session_id": 70378407854117,
+      "command": "SMB2_COMMAND_SESSION_LOGOFF"
+    }
+  ],
+  "dst_app": [
+    {
+      "new": true,
+      "id": 1,
+      "tree_id": 0,
+      "session_id": 0,
+      "dialect": "unknown",
+      "status": "STATUS_SUCCESS",
+      "status_code": "0x0"
+    },
+    {
+      "new": true,
+      "id": 2,
+      "tree_id": 1,
+      "session_id": 70378407854117,
+      "created": 1550655519,
+      "accessed": 1557222021,
+      "modified": 1557222021,
+      "changed": 1557222021,
+      "size": 4096,
+      "dialect": "unknown",
+      "status": "STATUS_SUCCESS",
+      "status_code": "0x0",
+      "fuid": "00004cc4-0010-0000-0001-000000000010"
+    },
+    {
+      "new": true,
+      "id": 3,
+      "tree_id": 1,
+      "session_id": 70378407854117,
+      "dialect": "unknown",
+      "status": "STATUS_SUCCESS",
+      "status_code": "0x0",
+      "get_info": {
+        "allocation_size": 131951291195371385,
+        "eof": 132016956217536501,
+        "link_count": 3819745269,
+        "delete_pending": true,
+        "is_directory": true
+      }
+    },
+    {
+      "new": true,
+      "id": 4,
+      "tree_id": 1,
+      "session_id": 70378407854117,
+      "created": 1550655519,
+      "accessed": 1557222021,
+      "modified": 1557222021,
+      "changed": 1557222021,
+      "size": 4096,
+      "dialect": "unknown",
+      "status": "STATUS_SUCCESS",
+      "status_code": "0x0",
+      "fuid": "00004cc5-0010-0000-0005-000000000010"
+    },
+    {
+      "new": true,
+      "id": 5,
+      "tree_id": 1,
+      "session_id": 70378407854117,
+      "dialect": "unknown",
+      "status": "STATUS_SUCCESS",
+      "status_code": "0x0",
+      "get_info": {
+        "allocation_size": 8247551,
+        "eof": 1478150,
+        "link_count": 1478150,
+        "delete_pending": false,
+        "is_directory": false
+      }
+    },
+    {
+      "new": true,
+      "id": 6,
+      "tree_id": 1,
+      "session_id": 70378407854117,
+      "dialect": "unknown",
+      "status": "STATUS_SUCCESS",
+      "status_code": "0x0"
+    },
+    {
+      "new": true,
+      "id": 7,
+      "tree_id": 1,
+      "session_id": 70378407854117,
+      "dialect": "unknown",
+      "status": "STATUS_SUCCESS",
+      "status_code": "0x0"
+    },
+    {
+      "new": true,
+      "id": 8,
+      "tree_id": 0,
+      "session_id": 70378407854117,
+      "dialect": "unknown",
+      "status": "STATUS_SUCCESS",
+      "status_code": "0x0"
+    }
+  ]
+}

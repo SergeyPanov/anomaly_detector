@@ -1,3 +1,4 @@
 .idea/
 *.iml
 target/
+/src/main/resources/schema-guru-0.6.2

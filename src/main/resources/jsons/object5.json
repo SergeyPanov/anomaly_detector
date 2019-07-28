@@ -1,0 +1,22 @@
+{
+  "id": 1,
+  "arrObs": [
+    {
+      "idd": 1,
+      "str": "1"
+    },
+    {
+      "idd": 2,
+      "str": "2"
+    }
+  ],
+  "ob": {
+    "anotherId": 1,
+    "anotherArray": [
+      {
+        "idd": 3,
+        "str": "3"
+      }
+    ]
+  }
+}

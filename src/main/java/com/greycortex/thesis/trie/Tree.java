@@ -1,25 +1,30 @@
 package com.greycortex.thesis.trie;
 
 import com.greycortex.thesis.json.*;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.json.simple.JSONObject;
 
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
-public class Trie {
+public class Tree {
     private JsonWrapper object;
 
-    private JsonComplex root;
+    private Node root;
 
-    public Trie(JsonWrapper object) {
+    public Tree(JsonWrapper object) {
         this.object = object;
-        root = new JsonComplex();
+        root = new Node(new JsonComplex(null, null));
         init();
     }
 
+    public Tree(Node root) {
+        this.root = root;
+    }
+
+    public Node getRoot() {
+        return root;
+    }
 
     /**
      * If @type contains more than 1 element or OBJECT/ARRAY then the type is complex.
@@ -52,14 +57,14 @@ public class Trie {
         inputStack.addAll(properties.entrySet());
 
 
-        Stack<Pair<JsonComplex, Stack<Map.Entry>>> trieConstructStack = new Stack<>();   // First is root, second are children
-        trieConstructStack.push(new Pair<>(root, inputStack));
+        Stack<Pair<Node, Stack<Map.Entry>>> trieConstructStack = new Stack<>();   // First is root, second are children
+        trieConstructStack.push(new MutablePair<>(root, inputStack));
 
         while (!trieConstructStack.isEmpty()) {
 
             Pair pr = trieConstructStack.pop();
 
-            JsonComplex currentRoot = (JsonComplex) pr.getKey();
+            Node currentRoot = (Node) pr.getKey();
 
             Stack values = (Stack) pr.getValue();
 
@@ -85,35 +90,35 @@ public class Trie {
                     simpleElement.setMax(value.getNumber(maxK, null));
                     simpleElement.setMin(value.getNumber(minK, null));
 
-                    currentRoot.add(0, simpleElement);
+                    currentRoot.add(0, new Node(simpleElement));
 
                 } else {
                     Set<Type> complexType = value.getType();
                     // ARRAY/OBJECT are complex types
-
                     if (complexType.size() == 1) {
                         Type type = complexType.iterator().next();
                         switch (type) {
                             case OBJECT:
-                                JsonComplex auxNode = new JsonComplex(name, value.getType());
+                                Node auxNode = new Node(new JsonComplex(name, value.getType()));
                                 currentRoot.add(0, auxNode);
                                 Stack<Map.Entry> nextInput = new Stack<>();
                                 nextInput.addAll(value.getWrapped(SchemaKeys.PROPERTIES).entrySet());
-                                trieConstructStack.push(new Pair<>(auxNode, nextInput));
+                                trieConstructStack.push(new MutablePair<>(auxNode, nextInput));
                                 break;
                             case ARRAY:
-                                auxNode = new JsonComplex(name, value.getType());
+                                auxNode = new Node(new JsonComplex(name, value.getType()));
                                 currentRoot.add(0, auxNode);
                                 nextInput = new Stack<>();
-                                Map.Entry<String, JSONObject> entry = new AbstractMap.SimpleEntry<>(SchemaKeys.ITEMS, value.getWrapped(SchemaKeys.ITEMS).getObject());
+                                Map.Entry<String, JSONObject> entry = new AbstractMap.SimpleEntry<>(name, value.getWrapped(SchemaKeys.ITEMS).getObject());
                                 nextInput.add(entry);
-                                trieConstructStack.push(new Pair<>(auxNode, nextInput));
+                                trieConstructStack.push(new MutablePair<>(auxNode, nextInput));
                                 break;
                             default:
                                 break;
                         }
                     } else {
-                        JsonComplex auxNode = new JsonComplex(name, value.getType());
+                        // Heterogeneous array
+                        Node auxNode = new Node(new JsonComplex(name, value.getType()));
                         currentRoot.add(0, auxNode);
                         Stack<Map.Entry> nextInput = new Stack<>();
 
@@ -155,6 +160,7 @@ public class Trie {
                             nextInput.add(entry);
                         }
 
+
                         if (complexType.contains(Type.OBJECT)) {
                             JSONObject dummy = new JSONObject();
 
@@ -164,24 +170,26 @@ public class Trie {
                             Map.Entry<String, JSONObject> entry = new AbstractMap.SimpleEntry<>(name, dummy);
                             nextInput.add(entry);
                         }
-                        trieConstructStack.push(new Pair<>(auxNode, nextInput));
+                        trieConstructStack.push(new MutablePair<>(auxNode, nextInput));
+
                     }
                 }
             }
         }
-        object = null;
     }
 
-
-    /**
-     * Merge this ad @tr
-     * @param tr the trie will be merged to this trie.
-     * @return merged trie
-     */
-    public Trie merge(Trie tr) {
-        return this;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tree tree = (Tree) o;
+        return Objects.equals(root, tree.root);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(root);
+    }
 
     @Override
     public String toString() {

@@ -13,22 +13,17 @@ public class JsonWrapper {
 
     public JsonWrapper(JSONObject object) {
         this.object = object;
-
-
         if (object.get(SchemaKeys.TYPE) == null) {
             type.add(Type.OBJECT);
         } else if (object.get(SchemaKeys.TYPE) instanceof JSONArray) {
             // Array can contain multiple types
             JSONArray tps = (JSONArray) object.get(SchemaKeys.TYPE);
-
             for (Object tp : tps) {
                 type.add(Type.getEnum(((String) tp)));
             }
         } else {
             type.add(Type.getEnum(((String) object.get(SchemaKeys.TYPE))));
         }
-
-
     }
 
     public Set<Type> getType() {

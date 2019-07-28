@@ -56,7 +56,6 @@ public class Schema {
                 meta.getColumns().add(c);
             }
 
-
             fields.addAll(Arrays.asList(DBTemplates.PK, "INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY"));
             // Generate FK constraints
             for (ERDTable parentTable :
@@ -69,7 +68,6 @@ public class Schema {
         }
 
         queries.addAll(fkConstraints);
-
         for (MetaTable meta :
                 prepared.values()) {
             meta.insert();

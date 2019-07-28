@@ -3,7 +3,7 @@ package com.greycortex.thesis.schema;
 public enum DBTypes {
 
     VARCHAR("string"),
-    NUMBER("numeric"),
+    NUMERIC("number"),
     BOOLEAN("boolean"),
     INTEGER("integer"),
     NULL("null");
@@ -14,7 +14,7 @@ public enum DBTypes {
 
     public static DBTypes getEnum(String name) {
         if (VARCHAR.value.equals(name)) return VARCHAR;
-        if (NUMBER.value.equals(name)) return NUMBER;
+        if (NUMERIC.value.equals(name)) return NUMERIC;
         if (BOOLEAN.value.equals(name)) return BOOLEAN;
         if (INTEGER.value.equals(name)) return INTEGER;
         return NULL;

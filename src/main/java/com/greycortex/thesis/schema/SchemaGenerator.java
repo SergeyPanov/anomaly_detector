@@ -5,10 +5,8 @@ import com.greycortex.thesis.trie.Tree;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -184,7 +182,10 @@ public class SchemaGenerator {
         for (Map.Entry entry :
                 snd.getColumns().entrySet()) {
             Pair<String, String> tablePair = (Pair<String, String>) entry.getKey();
-            fst.setNewColumn(tablePair.getKey(), tablePair.getValue(), (List<String>) entry.getValue());
+
+            String columnName = String.join("_", ((List<String>) entry.getValue()).stream().filter(Objects::nonNull).collect(Collectors.toList()));
+
+            fst.setNewColumn(columnName, tablePair.getValue(), (List<String>) entry.getValue());
         }
 
         /*

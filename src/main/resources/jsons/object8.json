@@ -1,0 +1,25 @@
+{
+    "root_col_1": "string",
+    "root_col_2": "string2",
+    "ob": {
+        "ob_col_1": 1.2,
+        "ob_col_2": "string",
+        "ob_col_simple_arr": [
+            1,
+            2
+        ],
+        "ob_col_complex_arr": [
+            {
+                "arr_ob_column_1": 1,
+                "arr_ob_column_2": 2,
+                "another_inner": [ {"id": 1} ]
+            }
+        ]
+    },
+
+    "root_arr_obs": [
+        {
+            "some_column": 1
+        }
+    ]
+}
